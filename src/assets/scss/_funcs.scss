@@ -1,0 +1,31 @@
+
+
+@mixin button($col: $teal, $bg: true) {
+    @if $bg == true {
+        border-color: darken($col, 10%);
+        background-color: rgba($col, .2);
+    }
+    color: $col;
+
+    &:hover {
+        @if $bg == true {
+            border-color: $col;
+            background-color: rgba($col, .4);
+        }
+        color: lighten($col, 20%);
+    }
+}
+
+@mixin align-element($axis, $percentage) {
+    position: absolute;
+	@if $axis == 'y' {
+		top: $percentage; transform: translateY(-$percentage);
+	}
+	@else if $axis == 'x' {
+		left: $percentage; transform: translateX(-$percentage);
+	}
+	@else {
+		top: $percentage; left: $percentage;
+		transform: translate(-$percentage, -$percentage);
+	}
+}

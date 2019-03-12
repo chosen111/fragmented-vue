@@ -1,0 +1,61 @@
+$warrior: #c79c6e;
+$paladin: #f58cba;
+$hunter: #abd473;
+$rogue: #fff569;
+$priest: #ffffff;
+$death-knight: #c41f3b;
+$shaman: #0070de;
+$mage: #40c7eb;
+$warlock: #8787ed;
+$monk: #00ff96;
+$druid: #ff7d0a;
+$demon-hunter: #a330c9;
+
+.warrior {
+  color: $warrior;
+  border-color: $warrior;
+}
+.paladin {
+  color: $paladin;
+  border-color: $paladin;
+}
+.hunter {
+  color: $hunter;
+  border-color: $hunter;
+}
+.rogue {
+  color: $rogue;
+  border-color: $rogue;
+}
+.priest {
+  color: $priest;
+  border-color: $priest;
+}
+.death-knight {
+  color: $death-knight;
+  border-color: $death-knight;
+}
+.shaman {
+  color: $warrior;
+  border-color: $warrior;
+}
+.mage {
+  color: $mage;
+  border-color: $mage;
+}
+.warlock {
+  color: $warlock;
+  border-color: $warlock;
+}
+.monk {
+  color: $monk;
+  border-color: $monk;
+}
+.druid {
+  color: $druid;
+  border-color: $druid;
+}
+.demon-hunter {
+  color: $demon-hunter;
+  border-color: $demon-hunter;
+}

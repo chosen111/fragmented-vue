@@ -4,6 +4,9 @@ import Vue from 'vue';
 import Fragmented from './main.vue';
 Vue.component('Fragmented', Fragmented);
 
+import Loading from './components/loading.component.vue';
+Vue.component('Loading', Loading);
+
 /* Static
 import vmHeader from './modules/header.module.vue';
 Vue.component('vmHeader', vmHeader);
