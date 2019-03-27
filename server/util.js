@@ -11,14 +11,9 @@ const knex = require('knex')({
 });
 
 const database = {
-  sql: {
-    selectGuildMembers: require('./sql/selectGuildMembers.sql'),
-    selectGuildRaiders: require('./sql/selectGuildRaiders.sql'),
-    selectRaidsByMember: require('./sql/selectRaidsByMember.sql'),
-    selectRaidsByType: require('./sql/selectRaidsByType.sql'),
-  },
   schema: {
     cache: "cache",
+    guild_raids: "guild_raids",
     guild_members: "guild_members",
     heroic_attendance: "heroic_attendance",
     mythic_attendance: "mythic_attendance",
@@ -72,22 +67,33 @@ const vars = {
       }
       await database.batchReplace(`guild_members`, membersBatch);
     },
-    async getGuildMembers() {
-      let result = await knex.raw(database.sql.selectGuildMembers(database.schema));
-      return result[0];
+    getGuildMembers() {
+      return knex.select().from(database.schema.guild_members)
+          .joinRaw(`NATURAL LEFT JOIN ${database.schema.static_guild_ranks}`)
+          .joinRaw(`NATURAL LEFT JOIN ${database.schema.static_wow_classes}`)
+          .joinRaw(`NATURAL LEFT JOIN ${database.schema.static_wow_races}`)
+          .joinRaw(`NATURAL LEFT JOIN ${database.schema.static_wow_genders}`)
+          .orderByRaw(`rank ASC, name ASC`);
     },
     async getRaidsByType(type) {
-      let result = await knex.raw(database.sql.selectRaidsByType(database.schema, type));
-      return result[0];
+      let query = knex.select().from(database.schema.guild_raids);
+
+      switch(type) {
+        case "mythic": return await query.where(`type`, "LIKE", 'm');
+        case "heroic": return await query.where(`type`, "LIKE", 'h');
+        default: return await query;
+      }
     },
     async getRaidsByMember(name) {
-      let result = await knex.raw(database.sql.selectRaidsByMember(database.schema, name))
-      return result[0];
+      return await knex.select().from(database.schema.guild_raids).where(`name`, "LIKE", name);
     },
-    async getGuildRaiders() {
-      let result = await knex.raw(database.sql.selectGuildRaiders(database.schema, "m"));
-      for (let member of result) {
-        member.raids = await getRaidByMember(member.name);
+    async getRaiders(type) {
+      let query = this.getGuildMembers();
+      
+      switch(type) {
+        case "mythic": return await query.whereRaw("rank < 5 OR rank = 7");
+        case "heroic": return await query.whereRaw("rank < 4 OR rank = 5");
+        default: return await query;
       }
     }
   },
@@ -125,7 +131,7 @@ const vars = {
           result = await axios.get(`https://eu.api.blizzard.com/wow/guild/${realmName}/${guildName}?fields=members`);          
           await vars.Fragmented.addGuildMembers(result.data.members);
         }
-        return await vars.Fragmented.getGuildMembers();
+        return await vars.Fragmented.getRaiders('m');
       }
       catch(e) {
         console.log(e);
