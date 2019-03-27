@@ -12,7 +12,10 @@ const knex = require('knex')({
 
 const database = {
   sql: {
-    selectGuildMembers: require('./sql/selectGuildMembers.sql')
+    selectGuildMembers: require('./sql/selectGuildMembers.sql'),
+    selectGuildRaiders: require('./sql/selectGuildRaiders.sql'),
+    selectRaidsByMember: require('./sql/selectRaidsByMember.sql'),
+    selectRaidsByType: require('./sql/selectRaidsByType.sql'),
   },
   schema: {
     cache: "cache",
@@ -72,6 +75,20 @@ const vars = {
     async getGuildMembers() {
       let result = await knex.raw(database.sql.selectGuildMembers(database.schema));
       return result[0];
+    },
+    async getRaidsByType(type) {
+      let result = await knex.raw(database.sql.selectRaidsByType(database.schema, type));
+      return result[0];
+    },
+    async getRaidsByMember(name) {
+      let result = await knex.raw(database.sql.selectRaidsByMember(database.schema, name))
+      return result[0];
+    },
+    async getGuildRaiders() {
+      let result = await knex.raw(database.sql.selectGuildRaiders(database.schema, "m"));
+      for (let member of result) {
+        member.raids = await getRaidByMember(member.name);
+      }
     }
   },
   Blizzard: { 

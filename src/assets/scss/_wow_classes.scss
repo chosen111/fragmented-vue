@@ -14,48 +14,60 @@ $demon-hunter: #a330c9;
 .warrior {
   color: $warrior;
   border-color: $warrior;
+  background-color: rgba($warrior, .2);
 }
 .paladin {
   color: $paladin;
   border-color: $paladin;
+  background-color: rgba($paladin, .2);
 }
 .hunter {
   color: $hunter;
   border-color: $hunter;
+  background-color: rgba($hunter, .2);
 }
 .rogue {
   color: $rogue;
   border-color: $rogue;
+  background-color: rgba($rogue, .2);
 }
 .priest {
   color: $priest;
   border-color: $priest;
+  background-color: rgba($priest, .2);
 }
 .death-knight {
   color: $death-knight;
   border-color: $death-knight;
+  background-color: rgba($death-knight, .2);
 }
 .shaman {
-  color: $warrior;
-  border-color: $warrior;
+  color: $shaman;
+  border-color: $shaman;
+  background-color: rgba($shaman, .2);
 }
 .mage {
   color: $mage;
   border-color: $mage;
+  background-color: rgba($mage, .2);
 }
 .warlock {
   color: $warlock;
   border-color: $warlock;
+  background-color: rgba($warlock, .2);  
 }
 .monk {
   color: $monk;
   border-color: $monk;
+  background-color: rgba($monk, .2);
 }
 .druid {
   color: $druid;
   border-color: $druid;
+  background-color: rgba($druid, .2);
 }
 .demon-hunter {
   color: $demon-hunter;
   border-color: $demon-hunter;
+  background-color: rgba($demon-hunter, .2);
 }

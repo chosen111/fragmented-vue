@@ -1,26 +1,39 @@
 <template>
   <div id="vue-app">
     <div class="bg"></div>
-    <header>header</header>
-    <transition mode="out-in"> 
+    <vm-header></vm-header>
+    <transition name="fx-main" mode="out-in"> 
       <router-view></router-view>
     </transition>
-    <footer>footer</footer>
+    <vm-footer></vm-footer>
   </div>
 </template>
 
 <script>
+import { TweenLite, CSSPlugin, Power2 } from 'gsap/TweenMax';
+import ScrollToPlugin from "gsap/ScrollToPlugin";
 
-export default { }
+export default { 
+  show(el, done) {
+    let animation = new TweenLite(el, 400, { opacity: 1 });
+    el.style.opacity = 0;
+    animation.play();
+  },
+  hide(el, done) {
+    Velocity(el, "stop", true);        
+    Velocity(el, {
+      opacity: 0
+    }, { easing: "swing", duration: 200, complete: done })
+  },
+}
 </script>
 
 <style lang="scss">
-@import '../assets/scss/normalize';
-@import '../assets/scss/_vars';
-@import '../assets/scss/_funcs';
-@import '../assets/scss/_fonts';
-@import '../assets/scss/_fx';
-@import '../assets/scss/_wow_classes';
+@import 'normalize.scss';
+@import '_fonts.scss';
+@import '_icons.scss';
+@import '_fx.scss';
+@import '_wow_classes.scss';
 
 html, body {
   height: 100%;
@@ -40,6 +53,11 @@ ul, li {
   list-style-type: none;
 }
 
+a {
+  text-decoration: none;
+  outline: none !important;
+}
+
 #vue-app {
   width: inherit;
   height: inherit;
@@ -48,25 +66,25 @@ ul, li {
 
   display: grid;
   grid-template-rows: 96px 1fr 32px;
-  header {
-    position: relative;
-    background: linear-gradient(to bottom, transparent 0, rgba(#fd6a02, .1) 96px);
-    &:after {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 1px;
-      background: linear-gradient(to right, lighten(#fd6a02, 10%), #fd6a02, lighten(#fd6a02, 10%));
-    }
-  }
   main {
     display: grid;
-    background: linear-gradient(to bottom, rgba(#fd6a02, .1) 0, transparent 96px);
-  }
-  footer {
+    transition: opacity .25s ease-out;
 
+    section {
+      display: flex;
+      flex-direction: column;  
+     
+     .title {
+        position: relative;
+        padding: 5px 12px;
+        align-self: center;
+        border-radius: 10px;
+        border-bottom: 1px solid $base-color;
+        background: linear-gradient(to bottom, rgba(darken($base-color, 20%), .01) 40%, rgba($base-color, .1) 100%);
+        color: $base-color;
+        font-weight: 400;
+      }
+    }
   }
 }
 
@@ -74,7 +92,7 @@ ul, li {
   position: fixed;
   width: 100%;
   height: 100%;
-  background: url('../assets/images/bg.jpg') no-repeat fixed center top / cover;
+  background: url('~assets/images/bg.jpg') no-repeat fixed center top / cover;
   z-index: -1;
   &:after {
     content: "";
@@ -84,5 +102,12 @@ ul, li {
     background: radial-gradient(ellipse at top, rgba(#000, .5), rgba(#000, .8)),
                 radial-gradient(ellipse at bottom, rgba(#000, .5), rgba(#000, .8));
   }
+}
+
+.fx-main-enter {
+  opacity: 0;
+}
+.fx-main-leave-to {
+  opacity: 0;
 }
 </style>

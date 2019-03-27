@@ -1,6 +1,8 @@
 <template>
   <main class="vue_home">
-
+    <section class="home">
+      <h1 class="title">Home</h1>
+    </section>
   </main>
 </template>
 

@@ -8,6 +8,6 @@ Vue.config.productionTip = false
 new Vue({
   router,
   el: 'div#vue-fragmented',
-  template: '<Fragmented />'
+  template: '<vue-fragmented />'
 })
 

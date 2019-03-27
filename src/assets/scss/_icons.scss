@@ -1,5 +1,5 @@
 [class^="icon-"], [class*=" icon-"] {
-    font-family: 'icodenamez' !important;
+    font-family: 'fragmentedico' !important;
     speak: none;
     font-style: normal;
     font-weight: normal;
@@ -11,7 +11,6 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-$icon-user: "\f2bd";
 $icon-locked: "\e901";
 $icon-mail: "\f0e0";
 $icon-sq-twitter: "\f081";
@@ -22,12 +21,8 @@ $icon-rarrow: "\f054";
 $icon-larrow: "\f053";
 $icon-check: "\f00c";
 $icon-close: "\f00d";
-$icon-shield: "\e900";
 $icon-warning: "\f071";
 
-.icon-user:before {
-    content: $icon-user;
-}
 .icon-locked:before {
     content: $icon-locked; 
 }
@@ -57,9 +52,6 @@ $icon-warning: "\f071";
 }
 .icon-close:before {
     content: $icon-close;
-}
-.icon-shield:before {
-    content: $icon-shield;
 }
 .icon-warning:before {
     content: $icon-warning;

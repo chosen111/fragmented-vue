@@ -2,10 +2,19 @@ import Vue from 'vue';
 
 // App
 import Fragmented from './main.vue';
-Vue.component('Fragmented', Fragmented);
+Vue.component('vue-fragmented', Fragmented);
 
+import vmHeader from './modules/header.module.vue';
+Vue.component('vm-header', vmHeader);
+import vmFooter from './modules/footer.module.vue';
+Vue.component('vm-footer', vmFooter);
+
+import Button from './components/button.component.vue';
+Vue.component('vc-button', Button);
+import HeaderButton from './components/header-button.component.vue';
+Vue.component('vc-header-button', HeaderButton);
 import Loading from './components/loading.component.vue';
-Vue.component('Loading', Loading);
+Vue.component('vc-loading', Loading);
 
 /* Static
 import vmHeader from './modules/header.module.vue';

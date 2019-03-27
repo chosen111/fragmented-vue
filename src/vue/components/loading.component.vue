@@ -1,9 +1,11 @@
 <template>
-  <div class="loading">
+  <div class="loading" :class="{ fail: error }">
     <div class="icon">
-      <span>Loading</span>
+      <span v-if="error">Failed</span>
+      <span v-else>Loading</span>
     </div>
-    <div class="message">
+    <div v-if="message" class="message">
+      <i v-if="error" class="icon-warning"></i>
       <span>{{ message }}</span>
     </div>
   </div>
@@ -16,8 +18,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../../assets/scss/_vars.scss';
-@import '../../assets/scss/_funcs.scss';
+@import '_funcs.scss';
 
 .loading {
   display: flex;
