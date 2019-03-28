@@ -10,10 +10,20 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 import { TweenLite, CSSPlugin, Power2 } from 'gsap/TweenMax';
 import ScrollToPlugin from "gsap/ScrollToPlugin";
 
 export default { 
+  async mounted() {
+    this.$cookies.config('30d')
+    this.$cookies.set('user', "test");
+    console.log(this.$cookies.get("user"));
+    let response = await axios.post("/session");
+
+    console.log(this.$store.state.bnet);
+  },
   show(el, done) {
     let animation = new TweenLite(el, 400, { opacity: 1 });
     el.style.opacity = 0;
@@ -65,7 +75,7 @@ a {
   min-height: 720px;
 
   display: grid;
-  grid-template-rows: 96px 1fr 32px;
+  grid-template-rows: 110px 1fr 32px;
   main {
     display: grid;
     transition: opacity .25s ease-out;

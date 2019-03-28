@@ -1,11 +1,15 @@
 <template>
   <header class="vue-header">
-    <router-link to="/" class="logo"></router-link>
-    <div class="middle">
+    <div class="left">
+      <vc-header-button icon="warning" name="members" href="members">Members</vc-header-button>
       <vc-header-button icon="warning" name="raids" href="raids">Raids</vc-header-button>
       <vc-header-button icon="warning" name="attendance" href="attendance">Attendance</vc-header-button>
+    </div>
+    <router-link to="/" class="logo">
+      <img height="110px" src="~assets/images/fragmented-logo.png" />
+    </router-link>
+    <div class="right">
       <vc-header-button icon="warning" name="flask" href="flask">Flasks</vc-header-button>
-      <vc-header-button icon="warning" name="members" href="members">Members</vc-header-button>
       <vc-header-button icon="warning" name="contact" href="contact">Contact Us</vc-header-button>
       <vc-header-button icon="warning" name="apply" href="apply">Apply</vc-header-button>
     </div>
@@ -22,17 +26,20 @@ export default {
 </script>
 
 <style lang="scss">
+@import '_funcs.scss';
+
 header {
   position: relative;
   // grid attributes
   display: grid;
   align-items: center;
-  grid-template-columns: 200px 1fr minmax(120px, auto);
+  grid-template-columns: auto 1fr 1fr 120px;
+  grid-template-areas: "logo left right auth";
   grid-column-gap: 10px;
   // end
   padding: 0 10px;
   background: linear-gradient(to bottom, rgba(darken($base-color, 20%), .1), rgba($base-color, .1));
-  &:after {
+  &:before {
     content: "";
     position: absolute;
     left: 0;
@@ -40,26 +47,35 @@ header {
     bottom: 0;
     height: 1px;
     //background: linear-gradient(to right, lighten($base-color, 10%), $base-color, lighten($base-color, 10%));
-  }
-
-  .logo {
-    background: url('~assets/images/logo.png') no-repeat center center / cover;
-    height: 48px;
-    transition: opacity .2s ease;
-    &:hover {
-      opacity: .4;
-    }
-  }
-  .middle {
+  }  
+  .left, .right {
     display: flex;
-    border-right: 1px solid;
+    //border-right: 1px solid;
 
     .vue-header-button {
       flex: 1;
       display: inline-block;
     }
   }
+  .left {
+    grid-area: left;
+  }
+  .right {
+    grid-area: right;
+  }
+  .logo {
+    grid-area: logo;
+    align-self: stretch;
+    height: 0;
+    transition: opacity .2s ease;
+    text-align: center;
+    &:hover {
+      opacity: .4;
+    }
+    z-index: 1;
+  }
   .auth {
+    grid-area: auth;
     display: flex;
     justify-content: center;
   }

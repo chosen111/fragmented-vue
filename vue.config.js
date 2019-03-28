@@ -23,6 +23,12 @@ module.exports = {
     }
   },
   devServer: {
-    proxy: 'http://localhost:5000'
-  },
+    proxy: {
+      '/blizzard': {
+        target: 'http://localhost:5000',
+        ws: true,
+        changeOrigin: true
+      }
+    }
+  }
 }

@@ -5,15 +5,18 @@ Vue.use(VueRouter);
 import vp404 from './pages/404.page.vue';
 import vpHome from './pages/home.page.vue';
 import vpAttendance from './pages/attendance.page.vue';
+import vpApply from './pages/apply.page.vue';
 
 const routes = [
-  { path: '/', component: vpHome },
-  { path: '/attendance', component: vpAttendance },
-  { path: '*', component: vp404 },
+  { path: '/', name: "home", component: vpHome },
+  { path: '/attendance', name: "attendance", component: vpAttendance },
+  { path: '/apply', name: "apply", component: vpApply },
+  { path: '*', name: "404", component: vp404 },
 ]
 
 const router = new VueRouter({
   mode: 'history',
+  base: process.env.BASE_URL,
   routes: routes
 })
 

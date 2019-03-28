@@ -1,5 +1,5 @@
 <template>
-  <router-link v-if="href" :to="href" class="vue-header-button" :class="[ btnName, btnActive, btnDisabled ]">
+  <router-link v-if="href" :to="`/${href}`" class="vue-header-button" :class="[ btnName, btnActive, btnDisabled ]">
     <i class="icon" :class="[ btnIcon ]"></i>
     <span v-if="$slots.default"><slot></slot></span>
   </router-link> 
