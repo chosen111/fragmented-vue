@@ -28,6 +28,11 @@ module.exports = {
         target: 'http://localhost:5000',
         ws: true,
         changeOrigin: true
+      },
+      '/session': {
+        target: 'http://localhost:5000',
+        ws: true,
+        changeOrigin: true
       }
     }
   }

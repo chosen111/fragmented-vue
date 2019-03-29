@@ -1,18 +1,15 @@
-var express = require('express');
-var passport = require('passport');
-var router = express.Router();
+const express = require('express');
+const passport = require('passport');
+const router = express.Router();
 
-var Blizzard = require('./util.js').Blizzard;
+const Blizzard = require('./util.js').Blizzard;
+const BnetStrategy = require('passport-bnet').Strategy;
 
-var BnetStrategy = require('passport-bnet').Strategy;
-var BNET_ID = "c6c7463498de4b988b45625bcd052eb5"
-var BNET_SECRET = "W9mHstYdG2LeDn20PXaaOLpW1RbmNAeb"
- 
 // Use the BnetStrategy within Passport.
 passport.use(new BnetStrategy({
-  clientID: BNET_ID,
-  clientSecret: BNET_SECRET,
-  callbackURL: "http://localhost:5000/blizzard/auth/callback",
+  clientID: Blizzard.BNET_ID,
+  clientSecret: Blizzard.BNET_SECRET,
+  callbackURL: "http://localhost:8080/blizzard/auth/callback",
   scope: "wow.profile",
   region: "eu"
 }, function(accessToken, refreshToken, profile, done) {
@@ -21,7 +18,7 @@ passport.use(new BnetStrategy({
   })
 }))
 
-router.use(async function(req, res, next) {
+router.use(async(req, res, next) => {
   await Blizzard.getToken();
   if (req.method == "POST") {
     //await Blizzard.getToken();
@@ -33,18 +30,23 @@ router.use(async function(req, res, next) {
   }
 })
 
-router.post('/guild/members', async function(req, res) {
+router.post('/guild/members', async(req, res) => {
   let result = await Blizzard.getGuildMembers("Fragmented", "Silvermoon");
   res.json(result);
 })
 
-router.get('/auth/callback', passport.authenticate('bnet', { failureRedirect: "/user" }), function(req, res) {
-  res.redirect(`/user/${req.user.battletag}`);
-})
+router.get('/auth/callback', 
+  function(req, res, next) {
+    if (req.header('Referer') != undefined) req.session.redirect = req.header('Referer').split("?")[0];
+    next();
+  },
+  passport.authenticate('bnet', { failureRedirect: '/' }),
+  function(req, res) {
+    let redirect = (req.session.redirect) ? `${req.session.redirect}?login=success` : `/user/${req.bnet.battletag}`;
+    res.redirect(redirect);
+  });
 
 router.post('/profile', async function(req, res) {
-  console.log(req.user);
-  console.log(req.isAuthenticated());
   res.json({});
 })
 

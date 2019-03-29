@@ -1,14 +1,12 @@
 <template>
   <header class="vue-header">
-    <div class="left">
-      <vc-header-button icon="warning" name="members" href="members">Members</vc-header-button>
-      <vc-header-button icon="warning" name="raids" href="raids">Raids</vc-header-button>
-      <vc-header-button icon="warning" name="attendance" href="attendance">Attendance</vc-header-button>
-    </div>
     <router-link to="/" class="logo">
       <img height="110px" src="~assets/images/fragmented-logo.png" />
     </router-link>
-    <div class="right">
+    <div class="middle">
+      <vc-header-button icon="warning" name="members" href="members">Members</vc-header-button>
+      <vc-header-button icon="warning" name="raids" href="raids">Raids</vc-header-button>
+      <vc-header-button icon="warning" name="attendance" href="attendance">Attendance</vc-header-button>
       <vc-header-button icon="warning" name="flask" href="flask">Flasks</vc-header-button>
       <vc-header-button icon="warning" name="contact" href="contact">Contact Us</vc-header-button>
       <vc-header-button icon="warning" name="apply" href="apply">Apply</vc-header-button>
@@ -33,8 +31,7 @@ header {
   // grid attributes
   display: grid;
   align-items: center;
-  grid-template-columns: auto 1fr 1fr 120px;
-  grid-template-areas: "logo left right auth";
+  grid-template-columns: auto 1fr 120px;
   grid-column-gap: 10px;
   // end
   padding: 0 10px;
@@ -48,23 +45,16 @@ header {
     height: 1px;
     //background: linear-gradient(to right, lighten($base-color, 10%), $base-color, lighten($base-color, 10%));
   }  
-  .left, .right {
+  .middle {
     display: flex;
-    //border-right: 1px solid;
+    border-right: 1px solid;
 
     .vue-header-button {
       flex: 1;
       display: inline-block;
     }
   }
-  .left {
-    grid-area: left;
-  }
-  .right {
-    grid-area: right;
-  }
   .logo {
-    grid-area: logo;
     align-self: stretch;
     height: 0;
     transition: opacity .2s ease;
@@ -75,7 +65,6 @@ header {
     z-index: 1;
   }
   .auth {
-    grid-area: auth;
     display: flex;
     justify-content: center;
   }

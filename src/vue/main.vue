@@ -17,12 +17,15 @@ import ScrollToPlugin from "gsap/ScrollToPlugin";
 
 export default { 
   async mounted() {
-    this.$cookies.config('30d')
-    this.$cookies.set('user', "test");
-    console.log(this.$cookies.get("user"));
-    let response = await axios.post("/session");
-
-    console.log(this.$store.state.bnet);
+    try {
+      let session = await axios.post('/session', { session: this.$cookies.get("session") });
+      this.$store.state.user = session.data.user;
+      this.$store.state.bnet = session.data.bnet;
+      console.log(this.$store.state.bnet);
+    }
+    catch(e) {
+      console.error(e);
+    }
   },
   show(el, done) {
     let animation = new TweenLite(el, 400, { opacity: 1 });
@@ -64,8 +67,17 @@ ul, li {
 }
 
 a {
-  text-decoration: none;
+  color: inherit;
   outline: none !important;
+	text-decoration: inherit;
+	
+	transition: color .15s linear, text-shadow .15s linear, background-color .15s linear;
+	cursor: pointer;
+	
+	&:not(.gradient):not(.router-link-active):hover {
+    color: lighten($base-color, 20%); 
+    text-shadow: 0 0 1px $base-color !important;
+	}
 }
 
 #vue-app {

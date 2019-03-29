@@ -98,6 +98,8 @@ const vars = {
     }
   },
   Blizzard: { 
+    BNET_ID: "c6c7463498de4b988b45625bcd052eb5",
+    BNET_SECRET: "W9mHstYdG2LeDn20PXaaOLpW1RbmNAeb",
     token: null,
     expires: null,
 
@@ -106,8 +108,8 @@ const vars = {
         try {
           let response = await axios.post('https://eu.battle.net/oauth/token', qs.stringify({
             grant_type: "client_credentials",
-            client_id: "c6c7463498de4b988b45625bcd052eb5",
-            client_secret: "W9mHstYdG2LeDn20PXaaOLpW1RbmNAeb"
+            client_id: this.BNET_ID,
+            client_secret: this.BNET_SECRET
           }));
           this.setToken(response.data);
         }

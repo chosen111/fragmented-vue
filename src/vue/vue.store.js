@@ -4,8 +4,8 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
-    bnet: {},
-    user: {},
+    bnet: -1,
+    user: -1,
   },
   mutations: {
     increment (state) {
