@@ -2,8 +2,10 @@
   <div id="vue-app">
     <div class="bg"></div>
     <vm-header></vm-header>
-    <transition name="fx-main" mode="out-in"> 
-      <router-view></router-view>
+    <transition name="fx-main" mode="out-in">
+      <keep-alive>
+        <router-view></router-view>
+      </keep-alive>
     </transition>
     <vm-footer></vm-footer>
   </div>
@@ -19,9 +21,9 @@ export default {
   async mounted() {
     try {
       let session = await axios.post('/session', { session: this.$cookies.get("session") });
+      console.log(session);
       this.$store.state.user = session.data.user;
       this.$store.state.bnet = session.data.bnet;
-      console.log(this.$store.state.bnet);
     }
     catch(e) {
       console.error(e);
@@ -44,7 +46,6 @@ export default {
 <style lang="scss">
 @import 'normalize.scss';
 @import '_fonts.scss';
-@import '_icons.scss';
 @import '_fx.scss';
 @import '_wow_classes.scss';
 
@@ -57,7 +58,9 @@ body {
   display: flex;
   font-family: "Ubuntu";
   font-weight: 400;
+  font-size: 16px;
   color: $base-color;
+  text-shadow: 1px 1px 1px #000;
 }
 
 ul, li {
@@ -68,16 +71,60 @@ ul, li {
 
 a {
   color: inherit;
-  outline: none !important;
+  outline: none;
 	text-decoration: inherit;
 	
-	transition: color .15s linear, text-shadow .15s linear, background-color .15s linear;
+	transition: color .2s ease, background-color .2s ease, text-shadow .2s ease;
 	cursor: pointer;
 	
-	&:not(.gradient):not(.router-link-active):hover {
+	&:not(.vue-button):not(.router-link-active):hover {
     color: lighten($base-color, 20%); 
-    text-shadow: 0 0 1px $base-color !important;
+    text-shadow: 0 0 1px $base-color;
 	}
+}
+
+.input {
+  display: flex;
+  flex-direction: column;
+  margin: 10px 0;
+  color: $base-color;
+  font-size: 14px;
+  font-weight: 600;
+
+  .input-label {
+    padding: 5px;      
+    border-bottom: 2px solid darken($base-color, 20%);
+    color: darken($base-color, 20%);
+    font-weight: 600;
+  }
+
+  input {
+    padding: 4px;
+    border-radius: 2px;
+    color: $base-color;
+    background: darken($base-color, 30%);
+    font-weight: 600;
+    text-shadow: 1px 1px 1px #000;
+
+    &:not(.clear) {
+      transition: background-color .2s ease;
+      &:hover:not(:focus):not(:disabled) {
+        background-color: rgba($base-color, .2);
+      }
+      &:focus {
+        background-color: rgba($base-color, .3);
+      }
+      &:disabled {
+        background-color: transparent;
+      }
+    }
+    background-image: none;
+    appearance: none; -webkit-appearance: none; -moz-appearance: none;
+    outline: none;
+    box-shadow: none;
+    border: none;
+    resize: none;
+  }
 }
 
 #vue-app {
@@ -93,9 +140,7 @@ a {
     transition: opacity .25s ease-out;
 
     section {
-      display: flex;
-      flex-direction: column;  
-     
+      display: grid;     
      .title {
         position: relative;
         padding: 5px 12px;

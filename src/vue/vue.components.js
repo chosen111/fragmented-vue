@@ -9,12 +9,16 @@ Vue.component('vm-header', vmHeader);
 import vmFooter from './modules/footer.module.vue';
 Vue.component('vm-footer', vmFooter);
 
-import Button from './components/button.component.vue';
-Vue.component('vc-button', Button);
-import HeaderButton from './components/header-button.component.vue';
-Vue.component('vc-header-button', HeaderButton);
-import Loading from './components/loading.component.vue';
-Vue.component('vc-loading', Loading);
+import vcIcon from './components/icon.component.vue';
+Vue.component('vc-icon', vcIcon);
+import vcButton from './components/button.component.vue';
+Vue.component('vc-button', vcButton);
+import vcSelect from './components/select.component.vue';
+Vue.component('vc-select', vcSelect);
+import vcDropdown from './components/dropdown.component.vue';
+Vue.component('vc-dropdown', vcDropdown);
+import vcLoading from './components/loading.component.vue';
+Vue.component('vc-loading', vcLoading);
 
 /* Static
 import vmHeader from './modules/header.module.vue';

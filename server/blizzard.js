@@ -35,6 +35,11 @@ router.post('/guild/members', async(req, res) => {
   res.json(result);
 })
 
+router.post('/characters', async(req, res) => {
+  let result = await Blizzard.getCharacters(req.body.token);
+  res.json(result);
+})
+
 router.get('/auth/callback', 
   function(req, res, next) {
     if (req.header('Referer') != undefined) req.session.redirect = req.header('Referer').split("?")[0];

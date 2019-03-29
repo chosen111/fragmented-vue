@@ -24,10 +24,10 @@ app.use(expressSession({
 	})
 }));
 passport.serializeUser(function(user, done) {
-    done(null, user);
+  done(null, user);
 });
 passport.deserializeUser(function(user, done) {
-    done(null, user);
+  done(null, user);
 });
 
 app.use(passport.initialize());
@@ -37,19 +37,18 @@ var blizzard = require('./server/blizzard')
 app.use('/blizzard', blizzard);
 
 app.post('/session', (req, res) => {
-    let response = {};
-    // Check if session is logged
-    if (req.body.session) {
+	let response = {};
+	// Check if session is logged
+	if (req.body.session) {
 
-    }
-    response.bnet = req.user;
-    console.log(response);
-    res.json(response);
+	}
+	response.bnet = req.user;
+  res.json(response);
 })
 
 // Handles any requests that don't match the ones above
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname + '/dist/index.html'));
+  res.sendFile(path.join(__dirname + '/dist/index.html'));
 })
 
 const port = process.env.PORT || 5000;

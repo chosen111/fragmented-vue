@@ -1,4 +1,7 @@
-$base-color: #fd6a02;
+$base-color: #10a1de;
+$base-color-2: darken($base-color, 20%);
+$base-color-bg: #0e86ca;
+$base-color-hover: lighten($base-color, 20%);
 
 $red: #ff0000;
 $lred: #ff6347;

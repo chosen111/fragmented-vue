@@ -127,11 +127,11 @@ export default {
     grid-template-columns: 400px auto;
     border: 1px solid $base-color;
     border-radius: 4px;
-    background-color: rgba(darken($base-color, 20%), .1);
+    background-color: rgba($base-color-2, .1);
 
     .membersTitle, .raidsTitle {
       padding: 5px 0;
-      background-color: rgba(darken($base-color, 20%), .5);
+      background-color: rgba($base-color-2, .5);
       border-bottom: 1px solid $base-color;
       text-align: center;
     }

@@ -1,11 +1,11 @@
 <template>
   <div class="loading" :class="{ fail: error }">
-    <div class="icon">
+    <div class="spinner">
       <span v-if="error">Failed</span>
       <span v-else>Loading</span>
     </div>
     <div v-if="message" class="message">
-      <i v-if="error" class="icon-warning"></i>
+      <vc-icon v-if="error" icon="warning"></vc-icon>
       <span>{{ message }}</span>
     </div>
   </div>
@@ -32,7 +32,7 @@ export default {
 
   animation: fadeIn .8s ease .2s forwards;
   &.fail {
-    .icon {
+    .spinner {
       border-color: $lred;
       span {
         color: $lred;
@@ -53,7 +53,7 @@ export default {
       }
     }      
   }
-  .icon {
+  .spinner {
     position: relative;
     width: 80px;
     height: 80px;

@@ -138,6 +138,18 @@ const vars = {
       catch(e) {
         console.log(e);
       }
+    },
+
+    async getCharacters(token) {
+      try {
+        let result = await axios.get(`https://eu.api.blizzard.com/wow/user/characters`, {
+          headers: { 'Authorization': `bearer ${token}` }
+        })
+        return result.data.characters.filter((c) => c.realm == "Silvermoon").sort((a, b) => b.level - a.level);
+      }
+      catch(e) {
+        console.log(e);
+      }
     }
   },
 }

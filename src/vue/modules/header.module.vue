@@ -1,18 +1,18 @@
 <template>
   <header class="vue-header">
     <router-link to="/" class="logo">
-      <img height="110px" src="~assets/images/fragmented-logo.png" />
+      <img height="110px" src="~assets/images/fragmented_v2.png" />
     </router-link>
     <div class="middle">
-      <vc-header-button icon="warning" name="members" href="members">Members</vc-header-button>
-      <vc-header-button icon="warning" name="raids" href="raids">Raids</vc-header-button>
-      <vc-header-button icon="warning" name="attendance" href="attendance">Attendance</vc-header-button>
-      <vc-header-button icon="warning" name="flask" href="flask">Flasks</vc-header-button>
-      <vc-header-button icon="warning" name="contact" href="contact">Contact Us</vc-header-button>
-      <vc-header-button icon="warning" name="apply" href="apply">Apply</vc-header-button>
+      <vc-button type="header" icon="warning" name="members" href="members">Members</vc-button>
+      <vc-button type="header" icon="warning" name="raids" href="raids">Raids</vc-button>
+      <vc-button type="header" icon="warning" name="attendance" href="attendance">Attendance</vc-button>
+      <vc-button type="header" icon="warning" name="flask" href="flask">Flasks</vc-button>
+      <vc-button type="header" icon="warning" name="contact" href="contact">Contact Us</vc-button>
+      <vc-button type="header" icon="warning" name="apply" href="apply">Apply</vc-button>
     </div>
     <div class="auth">
-      <vc-button type="gradient">Log In</vc-button>
+      <vc-button type="fill">Log In</vc-button>
     </div>
   </header>
 </template>
@@ -28,12 +28,10 @@ export default {
 
 header {
   position: relative;
-  // grid attributes
   display: grid;
   align-items: center;
   grid-template-columns: auto 1fr 120px;
   grid-column-gap: 10px;
-  // end
   padding: 0 10px;
   background: linear-gradient(to bottom, rgba(darken($base-color, 20%), .1), rgba($base-color, .1));
   &:before {
@@ -43,26 +41,24 @@ header {
     right: 0;
     bottom: 0;
     height: 1px;
-    //background: linear-gradient(to right, lighten($base-color, 10%), $base-color, lighten($base-color, 10%));
+    background: linear-gradient(to right, lighten($base-color, 10%), $base-color, lighten($base-color, 10%));
+    opacity: .4;
   }  
   .middle {
     display: flex;
     border-right: 1px solid;
 
-    .vue-header-button {
+    .vue-button {
       flex: 1;
-      display: inline-block;
     }
   }
   .logo {
-    align-self: stretch;
     height: 0;
+    align-self: stretch;
     transition: opacity .2s ease;
-    text-align: center;
     &:hover {
-      opacity: .4;
+      opacity: .6;
     }
-    z-index: 1;
   }
   .auth {
     display: flex;
