@@ -35,9 +35,7 @@ export default {
         options: [ ],
         width: null,
         disabled: false,
-        fn: {
-          OnSelect() { }
-        }
+        ack: undefined
       }
       return Object.assign(defaults, this.data || { });
     },
@@ -50,9 +48,10 @@ export default {
       if (this.selection.disabled) return;
 
       this.isActive = false;
-
       this.selection.selected = id;
-      this.selection.fn.OnSelect(id)
+      if (typeof(this.selection.ack) == 'function') {
+        this.selection.ack(id)
+      }
     }
   }
 }
@@ -128,6 +127,7 @@ export default {
     background-color: darken($base-color-2, 20%);
     border-radius: 4px;
     overflow-y: auto;
+    z-index: 1;
 
     transition: max-height .4s ease;
     &.is-active {

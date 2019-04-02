@@ -10,6 +10,37 @@ const knex = require('knex')({
   }
 });
 
+/*const crawler = require('crawler');
+const c = new crawler({
+  rateLimit: 1000,
+  // This will be called for each crawled page
+  callback : function (error, res, done) {
+    if(error){
+      console.log(error);
+    }
+    else {
+      var $ = res.$;
+      console.log($("title").text());
+    }
+    done();
+  }
+})
+
+c.queue({
+  uri: 'https://www.warcraftlogs.com/character/eu/silvermoon/blinkal%c3%b8t',
+  // The global callback won't be called
+  callback: function (error, res, done) {
+      if(error){
+          console.log(error);
+      }
+      else {
+        var $ = res.$;
+        console.log($('.best-perf-avg').html());
+      }
+      done();
+  }
+})*/
+
 const database = {
   schema: {
     cache: "cache",
@@ -21,6 +52,9 @@ const database = {
     static_wow_classes: "static_wow_classes",
     static_wow_genders: "static_wow_genders",
     static_wow_races: "static_wow_races"
+  },
+  addBackTicks(array) {
+    return array.map((i) => '`' + i + '`');
   },
   async batchReplace(table, records, options={}) {
     if (!table) throw "No table specified!";
@@ -38,7 +72,7 @@ const database = {
       return tmp;
     })
   
-    let updateQuery = `REPLACE INTO ${table} (${columns.join(',')}) VALUES ${records.map(() => '(?)').join(',')}`;
+    let updateQuery = `REPLACE INTO ${table} (${this.addBackTicks(columns).join(',')}) VALUES ${records.map(() => '(?)').join(',')}`;
     return await knex.raw(updateQuery, vals);
   }
 }
@@ -48,11 +82,7 @@ const vars = {
 
   Fragmented: { 
     async addGuildMembers(members) {
-      let membersBatch = [];
-      await knex.raw('INSERT INTO `cache` (`cache`, `expiresAt`) VALUES ("guild_members", ":expiresAt") ON DUPLICATE KEY UPDATE `expiresAt` = ":expiresAt"', {
-        expiresAt: Date.now() + (60*60*1000)
-      })
-    
+      let membersBatch = [];   
       for(let i = 0; i < members.length; i++) {
         if (members[i].character.level < 120) continue;
         membersBatch.push({
@@ -65,7 +95,20 @@ const vars = {
           gender: members[i].character.gender
         })
       }
-      await database.batchReplace(`guild_members`, membersBatch);
+      await knex.transaction(async (trx) => {
+        try {
+          // Update the cache variable and repopulate guild members, rollback on error
+          await knex.raw('INSERT INTO `cache` (`cache`, `expiresAt`) VALUES ("guild_members", ":expiresAt") ON DUPLICATE KEY UPDATE `expiresAt` = ":expiresAt"', {
+            expiresAt: Date.now() + (60*60*1000)
+          })
+          await knex.del().from(`guild_members`);
+          await database.batchReplace(`guild_members`, membersBatch);
+        }
+        catch (err) {
+          console.error("The transaction failed. Rollback to previous state!");
+          throw err;
+        }
+      })
     },
     getGuildMembers() {
       return knex.select().from(database.schema.guild_members)
@@ -73,7 +116,7 @@ const vars = {
           .joinRaw(`NATURAL LEFT JOIN ${database.schema.static_wow_classes}`)
           .joinRaw(`NATURAL LEFT JOIN ${database.schema.static_wow_races}`)
           .joinRaw(`NATURAL LEFT JOIN ${database.schema.static_wow_genders}`)
-          .orderByRaw(`rank ASC, name ASC`);
+          .orderByRaw("`rank` ASC, `name` ASC");
     },
     async getRaidsByType(type) {
       let query = knex.select().from(database.schema.guild_raids);
@@ -91,9 +134,35 @@ const vars = {
       let query = this.getGuildMembers();
       
       switch(type) {
-        case "mythic": return await query.whereRaw("rank < 5 OR rank = 7");
-        case "heroic": return await query.whereRaw("rank < 4 OR rank = 5");
+        case "mythic": return await query.whereRaw("`rank` < 5 OR `rank` = 7");
+        case "heroic": return await query.whereRaw("`rank` < 4 OR `rank` = 5");
         default: return await query;
+      }
+    }
+  },
+  WarcraftLogs: {
+    KEY: "7b266aa882cb34bb1ab4e9569531464d",
+    ORDER: {
+      "Champion of the Light": 1,
+      "Jadefire Masters": 2,
+      "Grong": 3,
+      "Opulence": 4,
+      "Conclave of the Chosen": 5,
+      "King Rastakhan": 6,
+      "Mekkatorque": 7,
+      "Stormwall Blockade": 8,
+      "Lady Jaina Proudmoore": 9
+    },
+    async getRanking(character, realm) {
+      try {
+        let response = await axios.get(`https://www.warcraftlogs.com/v1/rankings/character/${encodeURI(character)}/${encodeURI(realm)}/eu?timeframe=historical&api_key=${this.KEY}`);
+        return response.data
+            .filter((e, i, self) => e.difficulty == self.reduce((max, e) => e.difficulty > max ? e.difficulty : max, self[0].difficulty)) // Filter by the highest difficulty
+            .map((e) => { return { encounter: e.encounterName, percentile: e.percentile, difficulty: e.difficulty, reportId: e.reportID, fightId: e.fightID } }) // Store only the necessary fields
+            .sort((e1, e2) => this.ORDER[e1.encounter] - this.ORDER[e2.encounter]); // Sort by the correct boss order
+      }
+      catch (err) {
+        return { error: this.getError(err) }
       }
     }
   },
@@ -102,6 +171,13 @@ const vars = {
     BNET_SECRET: "W9mHstYdG2LeDn20PXaaOLpW1RbmNAeb",
     token: null,
     expires: null,
+
+    getError(err) {
+      return {
+        status: err.response.status,
+        message: err.response.statusText
+      }
+    },
 
     async getToken() {
       if (!this.token || Date.now() > this.expires) {
@@ -113,8 +189,8 @@ const vars = {
           }));
           this.setToken(response.data);
         }
-        catch(e) {
-          console.log(e);
+        catch (err) {
+          console.log(err);
         }
       }
     },
@@ -135,8 +211,8 @@ const vars = {
         }
         return await vars.Fragmented.getRaiders('m');
       }
-      catch(e) {
-        console.log(e);
+      catch (err) {
+        console.log(err);
       }
     },
 
@@ -147,8 +223,8 @@ const vars = {
         })
         return result.data.characters.filter((c) => c.realm == "Silvermoon").sort((a, b) => b.level - a.level);
       }
-      catch(e) {
-        console.log(e);
+      catch (err) {
+        return { error: this.getError(err) }
       }
     }
   },

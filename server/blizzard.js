@@ -37,7 +37,15 @@ router.post('/guild/members', async(req, res) => {
 
 router.post('/characters', async(req, res) => {
   let result = await Blizzard.getCharacters(req.body.token);
+  if (result.error) {
+    req.logout();
+  }
   res.json(result);
+})
+
+router.post('/auth/logout', async(req, res) => {
+  req.logout();
+  res.json({});
 })
 
 router.get('/auth/callback', 

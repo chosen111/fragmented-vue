@@ -1,0 +1,105 @@
+$COMMON: #808080;
+$UNCOMMON: #1eff00;
+$RARE: #0070ff;
+$EPIC: #a335ee;
+$LEGENDARY: #ff8000;
+$ARTIFACT: #e5cc80;
+
+.common {
+  color: $COMMON;
+  border-color: $COMMON;
+}
+.uncommon {
+  color: $UNCOMMON;
+  border-color: $UNCOMMON;
+}
+.rare {
+  color: $RARE;
+  border-color: $RARE;
+}
+.epic {
+  color: $EPIC;
+  border-color: $EPIC;
+}
+.legendary {
+  color: $LEGENDARY;
+  border-color: $LEGENDARY;
+}
+.artifact {
+  color: $ARTIFACT;
+  border-color: $ARTIFACT;
+}
+
+$WARRIOR: #c79c6e;
+$PALADIN: #f58cba;
+$HUNTER: #abd473;
+$ROGUE: #fff569;
+$PRIEST: #ffffff;
+$DEATH-KNIGHT: #c41f3b;
+$SHAMAN: #0070de;
+$MAGE: #40c7eb;
+$WARLOCK: #8787ed;
+$MONK: #00ff96;
+$DRUID: #ff7d0a;
+$DEMON-HUNTER: #a330c9;
+
+.warrior {
+  color: $WARRIOR;
+  border-color: $WARRIOR;
+  background-color: rgba($WARRIOR, .2);
+}
+.paladin {
+  color: $PALADIN;
+  border-color: $PALADIN;
+  background-color: rgba($PALADIN, .2);
+}
+.hunter {
+  color: $HUNTER;
+  border-color: $HUNTER;
+  background-color: rgba($HUNTER, .2);
+}
+.rogue {
+  color: $ROGUE;
+  border-color: $ROGUE;
+  background-color: rgba($ROGUE, .2);
+}
+.priest {
+  color: $PRIEST;
+  border-color: $PRIEST;
+  background-color: rgba($PRIEST, .2);
+}
+.death-knight {
+  color: $DEATH-KNIGHT;
+  border-color: $DEATH-KNIGHT;
+  background-color: rgba($DEATH-KNIGHT, .2);
+}
+.shaman {
+  color: $SHAMAN;
+  border-color: $SHAMAN;
+  background-color: rgba($SHAMAN, .2);
+}
+.mage {
+  color: $MAGE;
+  border-color: $MAGE;
+  background-color: rgba($MAGE, .2);
+}
+.warlock {
+  color: $WARLOCK;
+  border-color: $WARLOCK;
+  background-color: rgba($WARLOCK, .2);  
+}
+.monk {
+  color: $MONK;
+  border-color: $MONK;
+  background-color: rgba($MONK, .2);
+}
+.druid {
+  color: $DRUID;
+  border-color: $DRUID;
+  background-color: rgba($DRUID, .2);
+}
+.demon-hunter {
+  color: $DEMON-HUNTER;
+  border-color: $DEMON-HUNTER;
+  background-color: rgba($DEMON-HUNTER, .2);
+}

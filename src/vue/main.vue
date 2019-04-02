@@ -47,7 +47,7 @@ export default {
 @import 'normalize.scss';
 @import '_fonts.scss';
 @import '_fx.scss';
-@import '_wow_classes.scss';
+@import '_wow.scss';
 
 html, body {
   height: 100%;
@@ -58,7 +58,7 @@ body {
   display: flex;
   font-family: "Ubuntu";
   font-weight: 400;
-  font-size: 16px;
+  font-size: 14px;
   color: $base-color;
   text-shadow: 1px 1px 1px #000;
 }
@@ -77,7 +77,7 @@ a {
 	transition: color .2s ease, background-color .2s ease, text-shadow .2s ease;
 	cursor: pointer;
 	
-	&:not(.vue-button):not(.router-link-active):hover {
+	&:not(.vue-button):not(.router-link-active):not(.custom):hover {
     color: lighten($base-color, 20%); 
     text-shadow: 0 0 1px $base-color;
 	}
@@ -97,8 +97,10 @@ a {
     color: darken($base-color, 20%);
     font-weight: 600;
   }
-
-  input {
+  textarea {
+    min-height: 85px;
+  }
+  input, textarea {
     padding: 4px;
     border-radius: 2px;
     color: $base-color;
