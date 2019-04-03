@@ -66,7 +66,7 @@
             <h2 class="tab-title">Personal</h2>
             <div class="input about-me">
               <label class="input-label">Short description of you (include your name)</label>
-              <textarea v-model="form.aboutMe" />
+              <textarea v-model="form.about" />
             </div>
             <div class="input apply-reason">
               <label class="input-label">Why are you applying to Fragmented?</label>

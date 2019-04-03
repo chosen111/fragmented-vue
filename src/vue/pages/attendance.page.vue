@@ -5,61 +5,61 @@
       <div class="attendanceWrapper">
         <div class="members">
           <div class="membersTitle">Members</div>
-          <div v-for="(member, index) in members" :key="index" class="member" :class="[ className(index) ]">{{ member.name }}</div>
+          <div v-for="(member, index) in members" :key="index" class="member" :class="[ className(index) ]">{{ member.character }}</div>
         </div>
         <div class="data">
           <div class="raid-1">
             <div class="raidsTitle">12/01/1994</div>
             <div class="status">
-              <div v-for="(member, index) in members" :key="index" class="member">{{ member.name }}</div>
+              <div v-for="(member, index) in members" :key="index" class="member">{{ member.character }}</div>
             </div>
           </div>
           <div class="raid-1">
             <div class="raidsTitle">12/01/1994</div>
             <div class="status">
-              <div v-for="(member, index) in members" :key="index" class="member">{{ member.name }}</div>
+              <div v-for="(member, index) in members" :key="index" class="member">{{ member.character }}</div>
             </div>
           </div>
           <div class="raid-1">
             <div class="raidsTitle">12/01/1994</div>
             <div class="status">
-              <div v-for="(member, index) in members" :key="index" class="member">{{ member.name }}</div>
+              <div v-for="(member, index) in members" :key="index" class="member">{{ member.character }}</div>
             </div>
           </div>
           <div class="raid-1">
             <div class="raidsTitle">12/01/1994</div>
             <div class="status">
-              <div v-for="(member, index) in members" :key="index" class="member">{{ member.name }}</div>
+              <div v-for="(member, index) in members" :key="index" class="member">{{ member.character }}</div>
             </div>
           </div>
           <div class="raid-1">
             <div class="raidsTitle">12/01/1994</div>
             <div class="status">
-              <div v-for="(member, index) in members" :key="index" class="member">{{ member.name }}</div>
+              <div v-for="(member, index) in members" :key="index" class="member">{{ member.character }}</div>
             </div>
           </div>
           <div class="raid-1">
             <div class="raidsTitle">12/01/1994</div>
             <div class="status">
-              <div v-for="(member, index) in members" :key="index" class="member">{{ member.name }}</div>
+              <div v-for="(member, index) in members" :key="index" class="member">{{ member.character }}</div>
             </div>
           </div>
           <div class="raid-1">
             <div class="raidsTitle">12/01/1994</div>
             <div class="status">
-              <div v-for="(member, index) in members" :key="index" class="member">{{ member.name }}</div>
+              <div v-for="(member, index) in members" :key="index" class="member">{{ member.character }}</div>
             </div>
           </div>
           <div class="raid-1">
             <div class="raidsTitle">12/01/1994</div>
             <div class="status">
-              <div v-for="(member, index) in members" :key="index" class="member">{{ member.name }}</div>
+              <div v-for="(member, index) in members" :key="index" class="member">{{ member.character }}</div>
             </div>
           </div>
           <div class="raid-1">
             <div class="raidsTitle">12/01/1994</div>
             <div class="status">
-              <div v-for="(member, index) in members" :key="index" class="member">{{ member.name }}</div>
+              <div v-for="(member, index) in members" :key="index" class="member">{{ member.character }}</div>
             </div>
           </div>
         </div>

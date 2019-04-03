@@ -3,7 +3,7 @@ const qs = require('querystring');
 const knex = require('knex')({
   client: 'mysql',
   connection: {
-    host: 'localhost',
+    host: '192.168.1.192',
     user: 'fragmented',
     password: 'vfs@8?sdUm5rQKgnfzm*@JU5q+9RLVb3$&84C+Dm$caTE_dh?#_7J?9sUs8ZPhMa',
     database: 'fragmented'
@@ -44,14 +44,142 @@ c.queue({
 const database = {
   schema: {
     cache: "cache",
-    guild_raids: "guild_raids",
-    guild_members: "guild_members",
-    heroic_attendance: "heroic_attendance",
-    mythic_attendance: "mythic_attendance",
-    static_guild_ranks: "static_guild_ranks",
     static_wow_classes: "static_wow_classes",
     static_wow_genders: "static_wow_genders",
-    static_wow_races: "static_wow_races"
+    static_wow_races: "static_wow_races",
+    static_guild_attendance: "static_guild_attendance",
+    static_guild_ranks: "static_guild_ranks",    
+    guild_members: "guild_members",
+    guild_raids: "guild_raids",
+    guild_applications: "guild_applications",    
+    guild_attendance: "guild_attendance",
+    wlogs_rankings: "wlogs_rankings",
+  },
+  async cache(table) {
+    let replaceQuery = "REPLACE INTO `cache` (`cache`) VALUES (?)";
+    return await knex.raw(replaceQuery, [table]);
+  },
+  async dropSchema() {
+    let schema = [];
+    for (table in this.schema) {
+      schema.push(table);
+    }
+    for (table of schema.reverse()) {
+      await knex.schema.dropTableIfExists(table);
+    }
+  },
+  async createSchema(schema) {
+    if (await knex.schema.hasTable(schema)) return;
+    switch(schema) {
+      case 'cache':
+        return await knex.schema.createTable(schema, (table) => {
+          table.charset('utf8');
+          table.string('cache', 32).primary().notNullable();
+          table.timestamp('updated_at').defaultTo(knex.fn.now());
+        })
+
+      case 'static_wow_classes':
+        return await knex.schema.createTable(schema, (table) => {
+          table.charset('utf8');
+          table.integer('class').primary().notNullable();
+          table.string('className', 32).notNullable();
+          table.string('classColor', 8).notNullable();
+        })
+
+      case 'static_wow_genders':
+        return await knex.schema.createTable(schema, (table) => {
+          table.charset('utf8');
+          table.integer('gender').primary().notNullable();
+          table.string('genderName', 8).notNullable();
+        })
+
+      case 'static_wow_races':
+        return await knex.schema.createTable(schema, (table) => {
+          table.charset('utf8');
+          table.integer('race').primary().notNullable();
+          table.string('raceName', 32).notNullable();
+          table.string('raceFaction', 16).notNullable();
+        })
+
+      case 'static_guild_attendance':
+        return await knex.schema.createTable(schema, (table) => {
+          table.charset('utf8');
+          table.integer('attendance').primary().notNullable();
+          table.string('attendanceText', 32).notNullable();
+          table.integer('attendanceFlag').notNullable();
+        })
+
+      case 'static_guild_ranks':
+        return await knex.schema.createTable(schema, (table) => {
+          table.charset('utf8');
+          table.integer('rank').primary().notNullable();
+          table.string('rankName', 32).notNullable();
+          table.string('rankColor', 32).defaultTo(null);
+          table.boolean('isAlt').defaultTo(null)
+        })
+
+      case 'guild_members':
+        return await knex.schema.createTable(schema, (table) => {
+          table.charset('utf8');
+          table.string('character', 32).collate('utf8_bin').primary().notNullable();
+          table.integer('rank').references('rank').on(this.schema.static_guild_ranks).notNullable().onDelete("NO ACTION").onUpdate("NO ACTION");
+          table.integer('level').notNullable();
+          table.string('role', 32).defaultTo(null);
+          table.string('spec', 32).defaultTo(null);
+          table.string('thumbnail', 128).notNullable();
+          table.integer('class').references('class').on(this.schema.static_wow_classes).notNullable().onDelete("NO ACTION").onUpdate("NO ACTION");
+          table.integer('race').references('race').on(this.schema.static_wow_races).notNullable().onDelete("NO ACTION").onUpdate("NO ACTION");
+          table.integer('gender').references('gender').on(this.schema.static_wow_genders).notNullable().onDelete("NO ACTION").onUpdate("NO ACTION");
+          table.boolean('hidden').defaultTo(false).notNullable();
+          table.string('twitch').defaultTo(null);
+          table.timestamp('updated_at').defaultTo(knex.fn.now());
+        })
+
+      case 'guild_raids':
+        return await knex.schema.createTable(schema, (table) => {
+          table.charset('utf8');
+          table.increments('raid').notNullable();
+          table.time('date').notNullable().unique();
+          table.string('type', 32).notNullable();
+        })
+
+      case 'guild_applications':
+        return await knex.schema.createTable(schema, (table) => {
+          table.charset('utf8');
+          table.collate('utf8_bin');
+          table.string('battleTag', 32).primary().notNullable();
+          table.string('character', 32).notNullable();
+          table.string('role', 8).notNullable();
+          table.text('about').notNullable();
+          table.text('applyReason').notNullable();
+          table.text('leaveReason').notNullable();
+          table.text('addition').notNullable();
+          table.text('played').notNullable();
+          table.text('raider').notNullable();
+          table.text('experience').notNullable();
+          table.timestamps(true, true);
+        })
+
+      case 'guild_attendance':
+        return await knex.schema.createTable(schema, (table) => {
+          table.charset('utf8');
+          table.string('character', 32).collate('utf8_bin').references('character').on(this.schema.guild_members).notNullable();
+          table.integer('raid').unsigned().references('raid').on(this.schema.guild_raids).notNullable();
+          table.integer('attendance').references('attendance').on(this.schema.static_guild_attendance).notNullable();
+          table.string('type', 4).notNullable();
+          table.primary(['character', 'raid', 'type']);
+        })
+
+      case 'wlogs_rankings':
+        return await knex.schema.createTable(schema, (table) => {
+          table.charset('utf8');
+          table.string('character', 32).collate('utf8_bin').notNullable();
+          table.string('realm', 64).collate('utf8_bin').notNullable();
+          table.json('rankings').notNullable();
+          table.primary(['character', 'realm']);
+          table.timestamp('updated_at').defaultTo(knex.fn.now());
+        })
+    }
   },
   addBackTicks(array) {
     return array.map((i) => '`' + i + '`');
@@ -71,7 +199,6 @@ const database = {
       }
       return tmp;
     })
-  
     let updateQuery = `REPLACE INTO ${table} (${this.addBackTicks(columns).join(',')}) VALUES ${records.map(() => '(?)').join(',')}`;
     return await knex.raw(updateQuery, vals);
   }
@@ -79,14 +206,29 @@ const database = {
 
 const vars = {
   knex: knex,
-
   Fragmented: { 
+    async addRanking(character, realm, rankings) {
+      let replaceQuery = `REPLACE INTO ${database.schema.wlogs_rankings} (${"`character`, `realm`, `rankings`"}) VALUES (?, ?, ?)`;
+      return await knex.raw(replaceQuery, [character, realm, JSON.stringify(rankings)]);
+    },
+    async getRanking(character, realm) {
+      let result = [];
+      try {
+        result = await knex.select(`rankings`).from(database.schema.wlogs_rankings).where('character', character).andWhere('realm', realm);
+      }
+      catch (err) {
+        console.error(err);
+      }
+      finally {
+        return (result.length) ? JSON.parse(result[0].rankings) : result;
+      }
+    },
     async addGuildMembers(members) {
       let membersBatch = [];   
       for(let i = 0; i < members.length; i++) {
         if (members[i].character.level < 120) continue;
         membersBatch.push({
-          name: members[i].character.name,
+          character: members[i].character.name,
           rank: members[i].rank,
           level: members[i].character.level,
           thumbnail: members[i].character.thumbnail,
@@ -98,11 +240,9 @@ const vars = {
       await knex.transaction(async (trx) => {
         try {
           // Update the cache variable and repopulate guild members, rollback on error
-          await knex.raw('INSERT INTO `cache` (`cache`, `expiresAt`) VALUES ("guild_members", ":expiresAt") ON DUPLICATE KEY UPDATE `expiresAt` = ":expiresAt"', {
-            expiresAt: Date.now() + (60*60*1000)
-          })
-          await knex.del().from(`guild_members`);
-          await database.batchReplace(`guild_members`, membersBatch);
+          await knex.del().from(database.schema.guild_members);
+          await database.cache(database.schema.guild_members);          
+          await database.batchReplace(database.schema.guild_members, membersBatch);
         }
         catch (err) {
           console.error("The transaction failed. Rollback to previous state!");
@@ -116,7 +256,7 @@ const vars = {
           .joinRaw(`NATURAL LEFT JOIN ${database.schema.static_wow_classes}`)
           .joinRaw(`NATURAL LEFT JOIN ${database.schema.static_wow_races}`)
           .joinRaw(`NATURAL LEFT JOIN ${database.schema.static_wow_genders}`)
-          .orderByRaw("`rank` ASC, `name` ASC");
+          .orderByRaw("`rank` ASC, `character` ASC");
     },
     async getRaidsByType(type) {
       let query = knex.select().from(database.schema.guild_raids);
@@ -128,7 +268,7 @@ const vars = {
       }
     },
     async getRaidsByMember(name) {
-      return await knex.select().from(database.schema.guild_raids).where(`name`, "LIKE", name);
+      return await knex.select().from(database.schema.guild_raids).where(`character`, "LIKE", name);
     },
     async getRaiders(type) {
       let query = this.getGuildMembers();
@@ -155,14 +295,21 @@ const vars = {
     },
     async getRanking(character, realm) {
       try {
-        let response = await axios.get(`https://www.warcraftlogs.com/v1/rankings/character/${encodeURI(character)}/${encodeURI(realm)}/eu?timeframe=historical&api_key=${this.KEY}`);
-        return response.data
-            .filter((e, i, self) => e.difficulty == self.reduce((max, e) => e.difficulty > max ? e.difficulty : max, self[0].difficulty)) // Filter by the highest difficulty
-            .map((e) => { return { encounter: e.encounterName, percentile: e.percentile, difficulty: e.difficulty, reportId: e.reportID, fightId: e.fightID } }) // Store only the necessary fields
-            .sort((e1, e2) => this.ORDER[e1.encounter] - this.ORDER[e2.encounter]); // Sort by the correct boss order
+        let cache = await knex.select('updated_at').from(database.schema.wlogs_rankings).where('character', character);
+        if (!cache[0] || (cache[0].updated_at.setHours(cache[0].updated_at.getHours()+6) < Date.now())) {
+          let result = await axios.get(`https://www.warcraftlogs.com/v1/rankings/character/${encodeURI(character)}/${encodeURI(realm)}/eu?timeframe=historical&api_key=${this.KEY}`);
+          let rankings = result.data
+              .filter((e, i, self) => e.difficulty == self.reduce((max, e) => e.difficulty > max ? e.difficulty : max, self[0].difficulty)) // Filter by the highest difficulty
+              .map((e) => { return { encounter: e.encounterName, percentile: e.percentile, difficulty: e.difficulty, reportId: e.reportID, fightId: e.fightID } }) // Store only the necessary fields
+              .sort((e1, e2) => this.ORDER[e1.encounter] - this.ORDER[e2.encounter]); // Sort by the correct boss order*/
+          await vars.Fragmented.addRanking(character, realm, rankings);
+        }
       }
       catch (err) {
-        return { error: this.getError(err) }
+        console.error(err);
+      }
+      finally {
+        return await vars.Fragmented.getRanking(character, realm);
       }
     }
   },
@@ -204,8 +351,8 @@ const vars = {
       let result;
       try {
         // check cache
-        let isCached = await knex.select().from('cache').where('cache', 'guild_members');
-        if (!isCached[0] || isCached[0].expiresAt < Date.now()) {
+        let cache = await knex.select('updated_at').from('cache').where('cache', 'guild_members');
+        if (!cache[0] || (cache[0].updated_at.setHours(cache[0].updated_at.getHours() + 1) < Date.now())) {
           result = await axios.get(`https://eu.api.blizzard.com/wow/guild/${realmName}/${guildName}?fields=members`);          
           await vars.Fragmented.addGuildMembers(result.data.members);
         }
@@ -228,6 +375,18 @@ const vars = {
       }
     }
   },
-}
+};
+
+(async function() {
+  try {
+    //await database.dropSchema();
+    for (let table in database.schema) {
+      await database.createSchema(table);
+    }    
+  }
+  catch (err) {
+    console.error(err);
+  }
+})()
 
 module.exports = vars;
