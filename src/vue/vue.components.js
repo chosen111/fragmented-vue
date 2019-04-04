@@ -8,6 +8,8 @@ import vmHeader from './modules/header.module.vue';
 Vue.component('vm-header', vmHeader);
 import vmFooter from './modules/footer.module.vue';
 Vue.component('vm-footer', vmFooter);
+import vmNotification from './modules/notification.module.vue';
+Vue.component('vm-notification', vmNotification);
 
 import vcIcon from './components/icon.component.vue';
 Vue.component('vc-icon', vcIcon);
@@ -15,10 +17,14 @@ import vcButton from './components/button.component.vue';
 Vue.component('vc-button', vcButton);
 import vcSelect from './components/select.component.vue';
 Vue.component('vc-select', vcSelect);
+import vcInput from './components/input.component.vue';
+Vue.component('vc-input', vcInput);
 import vcDropdown from './components/dropdown.component.vue';
 Vue.component('vc-dropdown', vcDropdown);
 import vcLoading from './components/loading.component.vue';
 Vue.component('vc-loading', vcLoading);
+import vcTooltip from './components/tooltip.component.vue';
+Vue.component('vc-tooltip', vcTooltip);
 
 /* Static
 import vmHeader from './modules/header.module.vue';

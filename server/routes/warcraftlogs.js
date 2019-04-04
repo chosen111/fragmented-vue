@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const WarcraftLogs = require('./util.js').WarcraftLogs;
+const WarcraftLogs = require('../util.js').WarcraftLogs;
 
 router.post('/getranking', async(req, res) => {
   let result = await WarcraftLogs.getRanking(req.body.character, req.body.realm);

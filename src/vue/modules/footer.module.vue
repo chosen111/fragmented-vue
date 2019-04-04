@@ -30,5 +30,4 @@ export default {
     opacity: .4;
   }
 }
-
 </style>

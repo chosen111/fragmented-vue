@@ -2,7 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const router = express.Router();
 
-const Blizzard = require('./util.js').Blizzard;
+const Blizzard = require('../util.js').Blizzard;
 const BnetStrategy = require('passport-bnet').Strategy;
 
 // Use the BnetStrategy within Passport.

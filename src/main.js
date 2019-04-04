@@ -5,6 +5,7 @@ Vue.use(VueCookies);
 VueCookies.config('30d')
 
 require('./vue/vue.components.js');
+require('./vue/vue.directives.js');
 import router from './vue/vue.routes.js';
 import store from './vue/vue.store.js';
 

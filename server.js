@@ -33,10 +33,12 @@ passport.deserializeUser(function(user, done) {
 app.use(passport.initialize());
 app.use(passport.session());
 
-const blizzard = require('./server/blizzard')
+const blizzard = require('./server/routes/blizzard')
 app.use('/blizzard', blizzard);
-const warcraftlogs = require('./server/warcraftlogs')
+const warcraftlogs = require('./server/routes/warcraftlogs')
 app.use('/warcraftlogs', warcraftlogs);
+const guild = require('./server/routes/guild');
+app.use('/guild', guild);
 
 app.post('/session', (req, res) => {
 	let response = {};

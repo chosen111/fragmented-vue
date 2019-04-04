@@ -26,7 +26,7 @@ export default {
       let style = { }
 
       if (this.img) return { backgroundImage: `url('${this.img}')` };
-      style.margin = this.spacing || "0 6px 0 6px";
+      style.margin = this.spacing || "0 6px 0 0";
 
       return style;
     }

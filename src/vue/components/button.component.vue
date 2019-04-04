@@ -42,7 +42,7 @@ export default {
     }
   },
   methods: {
-    btnClick() {
+    btnClick() {      
       if (this.disabled) return;
       
       this.btnDropdown.visible = !this.btnDropdown.visible;

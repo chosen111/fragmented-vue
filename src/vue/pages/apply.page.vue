@@ -21,33 +21,39 @@
       </div>
       <div v-else class="application-wrapper">
         <h1 class="title">Apply to Fragmented</h1>
-        <form class="application" action="/guild/apply" method="post">
+        <form class="application">
           <div class="tab character-data">
             <h2 class="tab-title">Character</h2>
             <div class="input battletag">
               <label class="input-label">BATTLE TAG</label>
-              <input type="text" v-model="form.tag" disabled />
+              <vc-input type="text" :input.sync="form.data.battleTag" :error="form.error.battleTag" :disabled="true"></vc-input>
             </div>
             <div class="switch-user">
-              <vc-button type="fill" :click="deauthorizeBNet.bind(null)">Switch Accounts</vc-button>
+              <vc-button type="fill" :click="deauthorizeBNet.bind()">Switch Accounts</vc-button>
             </div>
             <div class="input charater">
-              <label class="input-label">CHARACTER</label>
-              <vc-select :data="bind.characterSelect"></vc-select>
+              <label class="input-label">
+                <span>CHARACTER</span>
+                <vc-icon v-if="form.error.character" icon="warning" v-tooltip="{ text: form.error.character, type: 'alert' }"></vc-icon>
+              </label>
+              <vc-select :data="bind.characterSelect" :disabled="form.isDisabled"></vc-select>
             </div>
             <div class="input role">
-              <label class="input-label">ROLE</label>
+              <label class="input-label">
+                <span>ROLE</span>
+                <vc-icon v-if="form.error.role" icon="warning" v-tooltip="{ text: form.error.role, type: 'alert' }"></vc-icon>
+              </label>
               <div class="role-container">
                 <div class="custom-checkbox">
-                  <input type="checkbox" name="role" v-model="form.role.tank" :disabled="form.isDisabled">
+                  <input type="checkbox" name="role" v-model="form.data.role[0]" :disabled="form.isDisabled">
                   <span class="checkmark tank"></span>
                 </div>
                 <div class="custom-checkbox">
-                  <input type="checkbox" name="role" v-model="form.role.healer" :disabled="form.isDisabled">
+                  <input type="checkbox" name="role" v-model="form.data.role[1]" :disabled="form.isDisabled">
                   <span class="checkmark healer"></span>
                 </div>
                 <div class="custom-checkbox">
-                  <input type="checkbox" name="role" v-model="form.role.dps" :disabled="form.isDisabled">
+                  <input type="checkbox" name="role" v-model="form.data.role[2]" :disabled="form.isDisabled">
                   <span class="checkmark dps"></span>
                 </div>
               </div>
@@ -66,39 +72,39 @@
             <h2 class="tab-title">Personal</h2>
             <div class="input about-me">
               <label class="input-label">Short description of you (include your name)</label>
-              <textarea v-model="form.about" />
+              <vc-input type="textarea" :input.sync="form.data.about" :error="form.error.about" :disabled="form.disabled"></vc-input>
             </div>
             <div class="input apply-reason">
               <label class="input-label">Why are you applying to Fragmented?</label>
-              <textarea v-model="form.applyReason" />
+              <vc-input type="textarea" :input.sync="form.data.applyReason" :error="form.error.applyReason" :disabled="form.disabled"></vc-input>
             </div>
             <div class="input leave-reason">
               <label class="input-label">Why did you leave the previous guild?</label>
-              <textarea v-model="form.leaveReason" />
+              <vc-input type="textarea" :input.sync="form.data.leaveReason" :error="form.error.leaveReason" :disabled="form.disabled"></vc-input>
             </div>
             <div class="input addition">
               <label class="input-label">Why do you think you can be a valuable addition?</label>
-              <textarea v-model="form.addition" />
+              <vc-input type="textarea" :input.sync="form.data.addition" :error="form.error.addition" :disabled="form.disabled"></vc-input>
             </div>
           </div>
           <div class="tab experience-data">
             <h2 class="tab-title">Experience</h2>
             <div class="input played">
               <label class="input-label">How long have you been playing WoW?</label>
-              <textarea v-model="form.played" />
+              <vc-input type="textarea" :input.sync="form.data.played" :error="form.error.played" :disabled="form.disabled"></vc-input>
             </div>
             <div class="input raider">
               <label class="input-label">How long have you been an active raider?</label>
-              <textarea v-model="form.raider" />
+              <vc-input type="textarea" :input.sync="form.data.raider" :error="form.error.raider" :disabled="form.disabled"></vc-input>
             </div>
             <div class="input experience">
               <label class="input-label">Describe your past raiding experience</label>
-              <textarea v-model="form.experience" />
+              <vc-input type="textarea" :input.sync="form.data.experience" :error="form.error.experience" :disabled="form.disabled"></vc-input>
             </div>
           </div>
         </form>
         <div class="control">
-          <vc-button type="fill submit">Submit Application</vc-button>
+          <vc-button type="fill submit" :click="addApplication.bind()">Submit Application</vc-button>
         </div>
       </div>
     </section>
@@ -119,17 +125,23 @@ export default {
         characterSelect: {
           text: "Select a character",
           options: [],
-          disabled: false,
           ack: this.OnCharacterSelect.bind(null)
         },
       },
       form: { 
-        isDisabled: true,
-        character: undefined,
-        role: {
-          tank: false,
-          healer: false,
-          dps: false,
+        isDisabled: false,
+        error: { },
+        data: {
+          tag: undefined,
+          character: undefined,
+          role: [ false, false, false ],
+          about: undefined,
+          applyReason: undefined,
+          leaveReason: undefined,
+          addition: undefined,
+          played: undefined,
+          raider: undefined,
+          experience: undefined,
         }
       }, 
       applications: [],
@@ -157,6 +169,22 @@ export default {
     }
   },
   methods: {
+    async addApplication() {
+      try {
+        this.form.error = { };
+        let response = await axios.post('/guild/addapplication', this.form.data);
+        if(response.error) {
+          console.error(`${response.error.status} ${response.error.message}`);
+        }
+        else {
+          this.form.error = response.data.error || { };
+          this.$store.commit("addNotification", { icon: "warning", text: response.data.notification, type: "warning" });
+        }
+      }
+      catch (err) {
+        console.error(err);
+      }
+    },
     async OnCharacterSelect(id) {
       try {
         let response = await axios.post('/warcraftlogs/getranking', {
@@ -167,7 +195,7 @@ export default {
           console.error(`${response.error.status} ${response.error.message}`);
         }
         else {
-          this.form.character = id;
+          this.form.data.character = this.characters[id].name;
           this.performance = response.data
         }
       }
@@ -176,6 +204,9 @@ export default {
       }
     },
     async deauthorizeBNet() {
+      this.$store.commit("addNotification", { icon: "warning", text: Math.random(), type: "warning" });
+      return 1;
+      
       try {
         await axios.post('/blizzard/auth/logout');
         this.$store.commit('clearBNet');
@@ -187,7 +218,7 @@ export default {
     async loadCharacters(bnet) {
       if (bnet == undefined || bnet == -1) return;
 
-      this.form.tag = bnet.battletag;
+      this.form.data.battleTag = bnet.battletag;
       try {
         this.$store.commit('startLoading', "Retrieving characters");
         let response = await axios.post('/blizzard/characters', {
@@ -273,6 +304,17 @@ export default {
           text-align: center;
         }
 
+        .input-label {
+          position: relative;
+          .icon-warning {
+            position: absolute;
+            right: 0;
+            bottom: 4px;
+            color: $lred;
+            animation: .4s flashError ease-in-out;
+          }
+        }
+
         .role .input-label, .rankings .input-label {
           padding: 5px;      
           border-bottom: 2px solid darken($base-color, 20%);
@@ -283,7 +325,6 @@ export default {
 
         .role {
           margin: 20px 0;
-
           .role-container {
             position: relative;
             display: flex;

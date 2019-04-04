@@ -1,11 +1,11 @@
 <template>
   <div class="vue-select">
-    <div class="select" :class="{ 'is-active': isActive, 'disabled': selection.disabled }" @click="open">
+    <div class="select" :class="{ 'is-active': isActive, 'disabled': disabled }" @click="open">
       <label class="select-label">{{ text }}</label>
       <vc-icon icon="arrow" fx="default"></vc-icon>
     </div>
     <ul class="select-dropdown" :class="{ 'is-active': isActive }">
-      <li v-for="(option, id) in selection.options" :key="id" class="option" @click="select(id)">
+      <li v-for="(option, id) in select.options" :key="id" class="option" @click="selectOption(id)">
         <label class="option-label">{{ option.text }}</label>
       </li>
     </ul>
@@ -14,16 +14,16 @@
 
 <script>
 export default {
-  props: [ "data" ],
+  props: [ "data", "disabled" ],
   data() {
     return {
       isActive: false,
-      selection: this.defaults()
+      select: this.defaults(),
     }
   },
   computed: {
     text() {
-      return (this.selection.selected != null) ? this.selection.options[this.selection.selected].text : this.selection.text;
+      return (this.select.selected != null) ? this.select.options[this.select.selected].text : this.select.text;
     }
   },
   methods: {
@@ -34,23 +34,21 @@ export default {
         selected: null,
         options: [ ],
         width: null,
-        disabled: false,
         ack: undefined
       }
       return Object.assign(defaults, this.data || { });
     },
     open() {
-      if (this.selection.disabled) return;
-
+      if (this.disabled) return;
       this.isActive = !this.isActive;
     },
-    select(id) {
-      if (this.selection.disabled) return;
+    selectOption(id) {
+      if (this.disabled) return;
 
       this.isActive = false;
-      this.selection.selected = id;
-      if (typeof(this.selection.ack) == 'function') {
-        this.selection.ack(id)
+      this.select.selected = id;
+      if (typeof(this.select.ack) == 'function') {
+        this.select.ack(id)
       }
     }
   }

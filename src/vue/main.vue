@@ -8,6 +8,8 @@
       </keep-alive>
     </transition>
     <vm-footer></vm-footer>
+    <vm-notification></vm-notification>
+    <vc-tooltip></vc-tooltip>
   </div>
 </template>
 
@@ -21,7 +23,6 @@ export default {
   async mounted() {
     try {
       let session = await axios.post('/session', { session: this.$cookies.get("session") });
-      console.log(session);
       this.$store.state.user = session.data.user;
       this.$store.state.bnet = session.data.bnet;
     }
