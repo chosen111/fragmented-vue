@@ -36,7 +36,7 @@
                 <span>CHARACTER</span>
                 <vc-icon v-if="form.error.character" icon="warning" v-tooltip="{ text: form.error.character, type: 'alert' }"></vc-icon>
               </label>
-              <vc-select :data="bind.characterSelect" :disabled="form.isDisabled"></vc-select>
+              <vc-select :select="bind.characterSelect" :disabled="isDisabled"></vc-select>
             </div>
             <div class="input role">
               <label class="input-label">
@@ -45,15 +45,15 @@
               </label>
               <div class="role-container">
                 <div class="custom-checkbox">
-                  <input type="checkbox" name="role" v-model="form.data.role[0]" :disabled="form.isDisabled">
+                  <input type="checkbox" name="role" v-model="form.data.role[0]" :disabled="isDisabled">
                   <span class="checkmark tank"></span>
                 </div>
                 <div class="custom-checkbox">
-                  <input type="checkbox" name="role" v-model="form.data.role[1]" :disabled="form.isDisabled">
+                  <input type="checkbox" name="role" v-model="form.data.role[1]" :disabled="isDisabled">
                   <span class="checkmark healer"></span>
                 </div>
                 <div class="custom-checkbox">
-                  <input type="checkbox" name="role" v-model="form.data.role[2]" :disabled="form.isDisabled">
+                  <input type="checkbox" name="role" v-model="form.data.role[2]" :disabled="isDisabled">
                   <span class="checkmark dps"></span>
                 </div>
               </div>
@@ -61,7 +61,7 @@
             <div v-if="performance.length" class="rankings">
               <label class="input-label">PERFORMANCE ({{ getRankingDifficulty }})</label>
               <div class="encounters">
-                <a v-for="(parse, index) in performance" :key="index" class="parse custom" :class="[ getParseColor(parse.percentile) ]" :href="`https://www.warcraftlogs.com/reports/${parse.reportId}#fight=${parse.fightId}&type=damage-done`" target="_blank">
+                <a v-for="(parse, index) in performance" :key="index" class="parse custom" :class="[ getRankingColor(parse.percentile) ]" :href="`https://www.warcraftlogs.com/reports/${parse.reportId}#fight=${parse.fightId}&type=damage-done`" target="_blank">
                   <span class="encounter">{{ parse.encounter }}</span>
                   <span class="percentile">{{ parse.percentile }}</span>
                 </a>
@@ -72,39 +72,41 @@
             <h2 class="tab-title">Personal</h2>
             <div class="input about-me">
               <label class="input-label">Short description of you (include your name)</label>
-              <vc-input type="textarea" :input.sync="form.data.about" :error="form.error.about" :disabled="form.disabled"></vc-input>
+              <vc-input type="textarea" :input.sync="form.data.about" :error="form.error.about" :disabled="isDisabled"></vc-input>
             </div>
             <div class="input apply-reason">
               <label class="input-label">Why are you applying to Fragmented?</label>
-              <vc-input type="textarea" :input.sync="form.data.applyReason" :error="form.error.applyReason" :disabled="form.disabled"></vc-input>
+              <vc-input type="textarea" :input.sync="form.data.applyReason" :error="form.error.applyReason" :disabled="isDisabled"></vc-input>
             </div>
             <div class="input leave-reason">
               <label class="input-label">Why did you leave the previous guild?</label>
-              <vc-input type="textarea" :input.sync="form.data.leaveReason" :error="form.error.leaveReason" :disabled="form.disabled"></vc-input>
+              <vc-input type="textarea" :input.sync="form.data.leaveReason" :error="form.error.leaveReason" :disabled="isDisabled"></vc-input>
             </div>
             <div class="input addition">
               <label class="input-label">Why do you think you can be a valuable addition?</label>
-              <vc-input type="textarea" :input.sync="form.data.addition" :error="form.error.addition" :disabled="form.disabled"></vc-input>
+              <vc-input type="textarea" :input.sync="form.data.addition" :error="form.error.addition" :disabled="isDisabled"></vc-input>
             </div>
           </div>
           <div class="tab experience-data">
             <h2 class="tab-title">Experience</h2>
             <div class="input played">
               <label class="input-label">How long have you been playing WoW?</label>
-              <vc-input type="textarea" :input.sync="form.data.played" :error="form.error.played" :disabled="form.disabled"></vc-input>
+              <vc-input type="textarea" :input.sync="form.data.played" :error="form.error.played" :disabled="isDisabled"></vc-input>
             </div>
             <div class="input raider">
               <label class="input-label">How long have you been an active raider?</label>
-              <vc-input type="textarea" :input.sync="form.data.raider" :error="form.error.raider" :disabled="form.disabled"></vc-input>
+              <vc-input type="textarea" :input.sync="form.data.raider" :error="form.error.raider" :disabled="isDisabled"></vc-input>
             </div>
             <div class="input experience">
               <label class="input-label">Describe your past raiding experience</label>
-              <vc-input type="textarea" :input.sync="form.data.experience" :error="form.error.experience" :disabled="form.disabled"></vc-input>
+              <vc-input type="textarea" :input.sync="form.data.experience" :error="form.error.experience" :disabled="isDisabled"></vc-input>
             </div>
           </div>
         </form>
-        <div class="control">
-          <vc-button type="fill submit" :click="addApplication.bind()">Submit Application</vc-button>
+        <div v-if="!isFinal" class="control">
+          <vc-button v-if="!applicationStatus || isEditing" type="fill add" :click="addApplication.bind()">Submit Application</vc-button>
+          <vc-button v-if="applicationStatus && !isEditing" type="fill edit" :click="editApplication.bind()">Edit Application</vc-button>
+          <vc-button v-if="applicationStatus" type="fill cancel" :click="cancelApplication.bind()" color="red">Cancel Application</vc-button>
         </div>
       </div>
     </section>
@@ -123,16 +125,17 @@ export default {
       performance: [],
       bind: {
         characterSelect: {
+          selected: null,
           text: "Select a character",
           options: [],
           ack: this.OnCharacterSelect.bind(null)
         },
       },
+      applicationStatus: null,
       form: { 
-        isDisabled: false,
         error: { },
         data: {
-          tag: undefined,
+          battleTag: undefined,
           character: undefined,
           role: [ false, false, false ],
           about: undefined,
@@ -144,19 +147,38 @@ export default {
           experience: undefined,
         }
       }, 
-      applications: [],
     }
   },
   async mounted() {
-    if (!this.characters.length) await this.loadCharacters(this.$store.state.bnet);
-
+    if (!this.$store.getters.getBNet == -1) {
+      await this.load(this.$store.state.bnet);
+    }
+    // Clear out the URL
     if (this.$route.query.login) {
+      this.$store.commit("addNotification", { text: "I_BNET_AUTHORIZED" });
       this.$router.push(this.$route.path);
     }
+    this.$store.commit("openWindow", { component: `vw-dialog`, name: `madafaca` });
+    this.$store.commit("openWindow", { component: `vw-dialog`, name: `madafaca doi` });
   },
   computed: {
     isLoading() {
       return (this.$store.getters.getBNet == -1 || this.$store.getters.getLoading.state) ? true : false;
+    },
+    isDisabled() {
+      switch (this.applicationStatus) {
+        case "applied":
+        case "final":
+          return true;
+        default:  
+          return false;
+      }
+    },
+    isEditing() {
+      return (this.applicationStatus == "editing") ? true : false;
+    },
+    isFinal() {
+      return (this.applicationStatus == "final") ? true : false;
     },
     getRankingDifficulty() {
       let difficulty = this.performance[0].difficulty;
@@ -166,73 +188,110 @@ export default {
         case 3: return 'NORMAL';
         case 1: return 'LFR';
       }
-    }
+    },
   },
   methods: {
+    async loadApplication() {
+      this.$store.commit('startLoading', "Loading your application");
+      try {
+        let response = await axios.post('/guild/getapplication');
+        if(response.error) {
+          throw `${response.error.status} ${response.error.message}`;
+        }
+        else {
+          if (response.data.length) {
+            let created = new Date(response.data[0].created_at);
+            this.applicationStatus = created.setHours(created.getHours() + 6) < Date.now() ? "final" : "applied";
+            delete response.data[0].created_at;
+            delete response.data[0].updated_at;
+
+            // Update form fields
+            this.$set(this.form, 'data', response.data[0]);
+            this.form.data.role = JSON.parse(response.data[0].role);
+            // Update character selection
+            let id = this.characters.map((c) => c.name).indexOf(response.data[0].character);
+            this.bind.characterSelect.selected = id;
+            // Update rankings
+            await this.loadRankings(id);
+          }
+          // Show notifications
+          this.$store.commit("addNotification", response.data.notification);
+        }
+      }
+      catch (err) {
+        console.error(err);
+      }
+    },
     async addApplication() {
       try {
         this.form.error = { };
-        let response = await axios.post('/guild/addapplication', this.form.data);
+        let action = (this.isEditing) ? '/guild/editapplication' : '/guild/addapplication';
+        let response = await axios.post(action, this.form.data);
         if(response.error) {
-          console.error(`${response.error.status} ${response.error.message}`);
+          throw `${response.error.status} ${response.error.message}`;
         }
-        else {
-          this.form.error = response.data.error || { };
-          this.$store.commit("addNotification", { icon: "warning", text: response.data.notification, type: "warning" });
+        // Show form errors or notifications
+        this.form.error = response.data.error || { };
+        this.$store.commit("addNotification", response.data.notification);
+  
+        if (response.data.notification) {
+          switch(response.data.notification.text) {
+            case "E_GUILD_APPLICATION_IS_FINAL": return this.applicationStatus = "final";
+          }
         }
+        if (!response.data.error) this.applicationStatus = 'applied';
+      }
+      catch (err) {
+        console.error(err);
+      }
+    },
+    editApplication() {
+      this.applicationStatus = "editing";
+    },
+    async cancelApplication() {      
+      try {
+        let response = await axios.post('/guild/cancelapplication', this.form.data);
+        if(response.error) {
+          throw `${response.error.status} ${response.error.message}`;
+        }
+        // Show notifications
+        this.$store.commit("addNotification", response.data.notification);
+        if (response.data.notification) {
+          switch(response.data.notification.text) {
+            case "E_GUILD_APPLICATION_IS_FINAL": return this.applicationStatus = "final";
+          }
+        }
+        this.formReset();
       }
       catch (err) {
         console.error(err);
       }
     },
     async OnCharacterSelect(id) {
-      try {
-        let response = await axios.post('/warcraftlogs/getranking', {
-          character: this.characters[id].name,
-          realm: this.characters[id].realm,
-        })
-        if(response.error) {
-          console.error(`${response.error.status} ${response.error.message}`);
-        }
-        else {
-          this.form.data.character = this.characters[id].name;
-          this.performance = response.data
-        }
-      }
-      catch (err) {
-        console.error(err);
-      }
+      this.form.data.character = this.characters[id].name;
+      await this.loadRankings(id)
     },
-    async deauthorizeBNet() {
-      this.$store.commit("addNotification", { icon: "warning", text: Math.random(), type: "warning" });
-      return 1;
-      
+    async deauthorizeBNet() {     
       try {
         await axios.post('/blizzard/auth/logout');
         this.$store.commit('clearBNet');
+        this.$store.commit("addNotification", { text: "I_BNET_DEAUTHORIZED" });
       }
       catch (err) {
         console.error(err);
       }
     },
     async loadCharacters(bnet) {
-      if (bnet == undefined || bnet == -1) return;
-
       this.form.data.battleTag = bnet.battletag;
+      this.$store.commit('startLoading', "Retrieving characters");
       try {
-        this.$store.commit('startLoading', "Retrieving characters");
         let response = await axios.post('/blizzard/characters', {
           token: bnet.token
-        });
-        this.$store.commit('stopLoading');
-
+        })
         if(response.error) {
-          console.error(`${response.error.status} ${response.error.message}`);
-          this.$store.commit('clearBNet');
+          throw `${response.error.status} ${response.error.message}`;
         }
-        else {
-          this.addCharacters(response.data);
-        }
+        this.addCharacters(response.data);
       }
       catch (err) {
         this.$store.commit('failLoading', err);
@@ -240,13 +299,27 @@ export default {
     },
     addCharacters(characters) {
       this.characters = characters;
-
       this.bind.characterSelect.options = [];
       for (let character of characters) {
         this.bind.characterSelect.options.push({ text: `(${character.level}) ${character.name} - ${character.realm}` });
       }
     },
-    getParseColor(percentile) {
+    async loadRankings(character) {
+      try {
+        let response = await axios.post('/warcraftlogs/getranking', {
+          character: this.characters[character].name,
+          realm: this.characters[character].realm,
+        })
+        if(response.error) {
+          throw `${response.error.status} ${response.error.message}`;
+        }
+        this.performance = response.data;
+      }
+      catch (err) {
+        console.error(err);
+      }
+    },
+    getRankingColor(percentile) {
       switch(true) {
         case percentile == 100: return 'artifact';
         case percentile >= 95: return 'legendary';
@@ -255,11 +328,32 @@ export default {
         case percentile >= 25: return 'uncommon';
         default: return 'common';
       }
+    },
+    async load(bnet) {
+      if(!bnet || bnet == -1) return;
+      await this.loadCharacters(bnet);
+      await this.loadApplication(bnet);      
+      this.$store.commit('stopLoading');
+    },
+    formReset() {
+      this.applicationStatus = null;
+      this.bind.characterSelect.selected = null;
+      this.form.data = Object.assign(this.form.data, {
+        role: [ false, false, false ],
+        about: undefined,
+        applyReason: undefined,
+        leaveReason: undefined,
+        addition: undefined,
+        played: undefined,
+        raider: undefined,
+        experience: undefined,
+      });
+      this.performance = [];
     }
   },
   watch: {
-    '$store.state.bnet': async function(newVal, oldVal) {
-      await this.loadCharacters(newVal);
+    '$store.state.bnet': async function(to, from) {
+      this.load(to);
     }
   }
 }
@@ -414,6 +508,7 @@ export default {
       .button {
         width: 200px;
         padding: 10px 50px 10px 50px;
+        margin: 0 10px 0 10px;
       }
     }
   }

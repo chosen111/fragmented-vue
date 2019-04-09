@@ -1,8 +1,8 @@
 <template>
   <transition-group tag="section" class="vue-notification" name="notificationfx">
-    <div v-for="(notification, index) in notifications" :key="notification.id" class="notification" :class="notification.type">
+    <div v-for="notification in notifications" :key="notification.id" class="notification" :class="notification.type">
       <vc-icon icon="warning"></vc-icon>
-      <span class="message">{{ notification.text }} : {{ notification.id || index }}</span>
+      <span class="message">{{ notification.text }}</span>
     </div>
   </transition-group>
 </template>
@@ -25,6 +25,7 @@ export default {
   bottom: 0;
   max-height: 110px;
   overflow: hidden;
+  z-index: 100;
 
   .notification {
     display: flex;
@@ -32,9 +33,9 @@ export default {
     height: 32px; // 40px;
     padding: 0 10px 0 10px;
     margin: 2px 5px 2px 5px;
-    border: 1px solid $teal;
+    border: 1px solid $base-color;
     border-radius: 5px;
-    background-color: darken($teal, 40%);
+    background-color: darken($base-color, 40%);
     font-weight: 600;
     opacity: 1;
 

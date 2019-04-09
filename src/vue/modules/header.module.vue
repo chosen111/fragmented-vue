@@ -26,7 +26,7 @@ export default {
 <style lang="scss">
 @import '_funcs.scss';
 
-header {
+.vue-header {
   position: relative;
   display: grid;
   align-items: center;

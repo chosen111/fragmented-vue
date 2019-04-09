@@ -5,6 +5,12 @@ const util = {
       return v.toString(16);
     })
   },
+  hasClass(element, className) {
+    if ((` ${element.className} `).replace(/[\n\t\r]/g, " ").indexOf(` ${className} `) != -1) {
+      return true;
+    }
+    return false;
+  },
   selector(el) {
     let computedSelector = "";
     do {
@@ -29,6 +35,21 @@ const util = {
 
     return { left, top }
   },
+  getRandomInt(min, max) {
+    return Math.floor((Math.random() * Math.floor(max - min)) + min)
+  },
+  clampMin(n, min) {
+    return (n < min) ? min : n;
+  },
+  clampMax(n, max) {
+    return (n > max) ? max : n;
+  },
+  clampRange(n, start, end) {
+    return (n < start) ? start : (n > end) ? end : n
+  },
+  clampLoop(n, start, end) {
+    return (n < start) ? end : (n > end) ? start : n;
+  }
 }
 
 export default util;

@@ -18,9 +18,32 @@ const store = new Vuex.Store({
       message: "Loading",
     },
     notifications: [],
-    tooltip: null
+    tooltip: null,
+    windows: [],
   },
   mutations: {
+    // Overlay
+    openWindow(state, window) {
+      state.windows.push({
+        id: util.uuid_v4(),
+        window: {
+          name: window.name || "Window",        
+          component: window.component,
+          props: window.props,
+          draggable: window.draggable || true,
+          dismissable: window.dismissable || true,
+        }
+      })
+    },
+    focusWindow(state, window) {
+      let id = state.windows.findIndex((w) => w.id == window.id);
+      if (id != -1) state.windows.push(state.windows.splice(id, 1)[0]);
+    },
+    closeWindow(state, window) {
+      let id = state.windows.findIndex((w) => w.id == window.id);
+      state.windows.splice(id, 1);
+    },
+
     // Tooltips
     showTooltip(state, tooltip) {
       state.tooltip = tooltip;
@@ -70,6 +93,12 @@ const store = new Vuex.Store({
     }
   },
   getters: {
+    // Overlay
+    getWindows: state => {
+      return state.windows;
+    },
+
+    // Tooltips
     getTooltip: state => {
       return state.tooltip;
     },

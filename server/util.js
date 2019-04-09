@@ -11,7 +11,7 @@ const knex = require('knex')({
 });
 
 const Validator = require('./validator');
-const ErrorUtil = require('./errorutil');
+const ResponseUtil = require('./responseutil');
 const Database = {
   schema: {
     cache: "cache",
@@ -128,6 +128,7 @@ const Database = {
           table.text('played').notNullable();
           table.text('raider').notNullable();
           table.text('experience').notNullable();
+          table.boolean('cancelled').notNullable().defaultTo(false);
           table.timestamps(true, true);
         })
 
@@ -176,21 +177,60 @@ const Database = {
 };
 
 const Fragmented = { 
-  async addApplication(data) {
+  async addApplication(battletag, data, action) {
     try {
+      if (!battletag || battletag.length == 0) return ResponseUtil.notificationObject("warning", "E_NOT_LOGGED_WITH_BNET", "alert");
+      data.battleTag = battletag;
+      
       let validated = Validator.fn.run("guildApplication", data);
-      await knex.insert(validated).into(Database.schema.guild_applications);
+      switch(action) {
+        case "insert": 
+          await knex.insert(validated).into(Database.schema.guild_applications);
+          return ResponseUtil.notificationObject("warning", "I_GUILD_APPLICATION_POSTED");
+        case "update":
+          let limit = await knex.select('created_at', 'cancelled').from(Database.schema.guild_applications).where(`battleTag`, "LIKE", battletag);
+          if (limit[0].created_at.setHours(limit[0].created_at.getHours() + 6) < Date.now()) {
+            return ResponseUtil.notificationObject("warning", "E_GUILD_APPLICATION_IS_FINAL", "alert");
+          }
+          await knex.update(validated).into(Database.schema.guild_applications).where(`battleTag`, "LIKE", battletag);
+          return ResponseUtil.notificationObject("warning", "I_GUILD_APPLICATION_EDITED");
+      }
     }
     catch (err) {
-      console.log(err);
       if (err instanceof Validator.ValidateError) {
-        return ErrorUtil.asObject(err.fields);
+        return ResponseUtil.errorObject(err.fields);
       }
       else {
         if (err.code == "ER_DUP_ENTRY") {
-          return ErrorUtil.asNotification("E_ALREADY_APPLIED_TO_GUILD")
+          return ResponseUtil.notificationObject("warning", "E_ALREADY_APPLIED_TO_GUILD", "alert")
+        }
+        else {
+          console.error(err);
         }
       }
+    }
+  },
+  async cancelApplication(battletag) {
+    try {
+      if (!battletag || battletag.length == 0) return ResponseUtil.notificationObject("warning", "E_NOT_LOGGED_WITH_BNET", "alert");
+
+      let limit = await knex.select('created_at').from(Database.schema.guild_applications).where(`battleTag`, "LIKE", battletag);
+      if (limit[0].created_at.setHours(limit[0].created_at.getHours() + 6) < Date.now()) return ResponseUtil.notificationObject("warning", "E_GUILD_APPLICATION_IS_FINAL", "alert");
+
+      await knex.delete().from(Database.schema.guild_applications).where(`battleTag`, "LIKE", battletag);
+      return ResponseUtil.notificationObject("warning", "I_GUILD_APPLICATION_CANCELLED");
+    }
+    catch (err) {
+      console.error(err);
+    }
+  },
+  async getApplication(battletag) {
+    try {
+      if (!battletag || battletag.length == 0) return ResponseUtil.notificationObject("warning", "E_NOT_LOGGED_WITH_BNET", "alert");
+      return knex.select().from(Database.schema.guild_applications).where(`battleTag`, "LIKE", battletag);
+    }
+    catch (err) {
+      console.error(err);
     }
   },
   async addRanking(character, realm, rankings) {

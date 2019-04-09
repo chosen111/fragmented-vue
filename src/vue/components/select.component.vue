@@ -14,11 +14,10 @@
 
 <script>
 export default {
-  props: [ "data", "disabled" ],
+  props: [ "select", "disabled" ],
   data() {
     return {
       isActive: false,
-      select: this.defaults(),
     }
   },
   computed: {
@@ -27,17 +26,6 @@ export default {
     }
   },
   methods: {
-    defaults() {
-      const defaults = {
-        key: null,
-        text: "Select an item",
-        selected: null,
-        options: [ ],
-        width: null,
-        ack: undefined
-      }
-      return Object.assign(defaults, this.data || { });
-    },
     open() {
       if (this.disabled) return;
       this.isActive = !this.isActive;
@@ -47,6 +35,7 @@ export default {
 
       this.isActive = false;
       this.select.selected = id;
+      
       if (typeof(this.select.ack) == 'function') {
         this.select.ack(id)
       }

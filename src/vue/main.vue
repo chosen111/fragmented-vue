@@ -4,11 +4,12 @@
     <vm-header></vm-header>
     <transition name="fx-main" mode="out-in">
       <keep-alive>
-        <router-view></router-view>
+        <router-view class="vue-main"></router-view>
       </keep-alive>
     </transition>
     <vm-footer></vm-footer>
     <vm-notification></vm-notification>
+    <vm-overlay></vm-overlay>
     <vc-tooltip></vc-tooltip>
   </div>
 </template>
@@ -24,7 +25,7 @@ export default {
     try {
       let session = await axios.post('/session', { session: this.$cookies.get("session") });
       this.$store.state.user = session.data.user;
-      this.$store.state.bnet = session.data.bnet;
+      this.$store.commit('setBNet', session.data.bnet);
     }
     catch(e) {
       console.error(e);
@@ -138,7 +139,7 @@ a {
 
   display: grid;
   grid-template-rows: 110px 1fr 32px;
-  main {
+  .vue-main {
     display: grid;
     transition: opacity .25s ease-out;
 

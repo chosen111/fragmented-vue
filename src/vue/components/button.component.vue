@@ -1,10 +1,10 @@
 <template>
   <div class="vue-button" :class="btnName">
-    <router-link v-if="href" :to="href" class="button" :class="[ btnColor, btnActiveLink, btnDisabled, type ]">
+    <router-link v-if="href" :to="href" class="button" :class="[ color, btnActiveLink, btnDisabled, type ]">
       <vc-icon v-if="icon" :icon="icon"></vc-icon>
       <span v-if="$slots.default"><slot></slot></span>
     </router-link>
-    <div v-else class="button" :class="[ btnColor, btnActive, btnDisabled, type ]" @click="btnClick">
+    <div v-else class="button" :class="[ color, btnActive, btnDisabled, type ]" @click="btnClick">
       <vc-icon v-if="icon" :icon="icon"></vc-icon>
       <span v-if="$slots.default"><slot></slot></span>
     </div>   
@@ -24,9 +24,6 @@ export default {
   computed: {
     btnName() {
       return (this.name) ? `button-${this.name}` : null;
-    },
-    btnColor() {
-      return `col-${this.color || "default"}`;
     },
     btnActive() {
       return (this.btnDropdown.visible) ? "is-active" : false;
@@ -101,9 +98,19 @@ export default {
     transition: background-color .2s ease;
     &:not(.disabled) {
       &.is-active, &:hover {
-        color: lighten($base-color, 40%);
         background-color: $base-color;
-        text-shadow: 1px 1px 1px #000;
+      }
+    }
+
+    &.red {
+      border: 1px solid $red;
+      background-color: darken($red, 5%);
+      color: lighten($red, 40%);
+
+      &:not(.disabled) {
+        &.is-active, &:hover {
+          background-color: $red;
+        }
       }
     }
   }

@@ -10,6 +10,10 @@ import vmFooter from './modules/footer.module.vue';
 Vue.component('vm-footer', vmFooter);
 import vmNotification from './modules/notification.module.vue';
 Vue.component('vm-notification', vmNotification);
+import vmOverlay from './modules/overlay.module.vue';
+Vue.component('vm-overlay', vmOverlay);
+import vmWindow from './modules/window.module.vue';
+Vue.component('vm-window', vmWindow);
 
 import vcIcon from './components/icon.component.vue';
 Vue.component('vc-icon', vcIcon);
@@ -25,6 +29,9 @@ import vcLoading from './components/loading.component.vue';
 Vue.component('vc-loading', vcLoading);
 import vcTooltip from './components/tooltip.component.vue';
 Vue.component('vc-tooltip', vcTooltip);
+
+import vwDialog from './components/windows/dialog.window.vue';
+Vue.component('vw-dialog', vwDialog);
 
 /* Static
 import vmHeader from './modules/header.module.vue';

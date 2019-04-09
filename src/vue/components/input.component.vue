@@ -22,6 +22,9 @@ export default {
   watch: {
     'value': function(to, from) {
       this.$emit('update:input', to);
+    },
+    'input': function(to, from) {
+      this.value = to;
     }
   }
 }
@@ -29,6 +32,7 @@ export default {
 
 <style lang="scss">
 .vue-input {
+  flex: 1;
   display: flex;
   position: relative;
   flex-direction: column;
